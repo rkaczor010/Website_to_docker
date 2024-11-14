@@ -1,0 +1,56 @@
+- name: Ensure httpd service is running
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+# 2. Check which port Apache is hosting the website on
+- name: Check Apache HTTPD configuration for listening port
+  command: "apache2ctl -S"
+  register: apache_config
+  changed_when: false
+  failed_when: false
+
+- name: Extract the listening port from Apache config
+  set_fact:
+    apache_port: "{{ apache_config.stdout | regex_search('Listen\\s+([0-9]+)', '\\1') }}"
+  when: apache_config.stdout is defined
+
+- name: Debug Apache port
+  debug:
+    msg: "Apache is hosting on port {{ apache_port }}"
+  when: apache_port is defined
+
+# 3. Check if the website is using a database (e.g., PostgreSQL or MySQL)
+- name: Check if the website is using a database
+  shell: |
+    grep -E 'DB_HOST|DB_NAME|DATABASE_URL' /var/www/html/config.php
+  register: db_config_check
+  failed_when: false
+  changed_when: false
+
+- name: Check if the website is connected to PostgreSQL (optional for PostgreSQL)
+  shell: |
+    psql -c "\conninfo"
+  register: db_conn_info
+  failed_when: false
+  changed_when: false
+  when: db_config_check.stdout != ""
+
+- name: Debug database connection info
+  debug:
+    msg: "Database is connected to PostgreSQL: {{ db_conn_info.stdout }}"
+  when: db_conn_info.stdout is defined
+
+- name: Check if the website is connected to MySQL (optional for MySQL)
+  shell: |
+    mysql -e "SHOW DATABASES;"
+  register: db_mysql_check
+  failed_when: false
+  changed_when: false
+  when: db_config_check.stdout != ""
+
+- name: Debug MySQL database info
+  debug:
+    msg: "Database is connected to MySQL: {{ db_mysql_check.stdout }}"
+  when: db_mysql_check.stdout is defined
