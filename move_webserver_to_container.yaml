@@ -1,0 +1,12 @@
+---
+- name: Move webserver to container
+  hosts: localhost
+  gather_facts: true
+  become: true
+  roles:
+    - name: identify_web_service
+
+  tasks:
+    - name: de
+      debug:
+        msg: "{{ web_service_name }}"
