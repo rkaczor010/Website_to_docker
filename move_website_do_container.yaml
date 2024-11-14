@@ -1,1 +1,45 @@
+- name: Move website to container
+  hosts: all
+  gather_facts: true
+  become: true
+ vars:
+    web_service_name: ""
+  tasks:
+    - name: Check if Apache (httpd) is installed
+      shell: dpkg -l | grep -E 'apache2|httpd'
+      register: apache_check
+      ignore_errors: yes
 
+    - name: Set web service name to Apache
+      set_fact:
+        web_service_name: "apache2"
+      when: apache_check.rc == 0
+
+    - name: Check if Nginx is installed
+      shell: dpkg -l | grep nginx
+      register: nginx_check
+      ignore_errors: yes
+
+    - name: Set web service name to Nginx
+      set_fact:
+        web_service_name: "nginx"
+      when: nginx_check.rc == 0
+
+    - name: Check if Lighttpd is installed
+      shell: dpkg -l | grep lighttpd
+      register: lighttpd_check
+      ignore_errors: yes
+
+    - name: Set web service name to Lighttpd
+      set_fact:
+        web_service_name: "lighttpd"
+      when: lighttpd_check.rc == 0
+
+    - name: Display the detected web service binary name
+      debug:
+        msg: "Detected web service binary name: {{ web_service_name }}"
+
+    - name: No web service detected
+      debug:
+        msg: "No web service is installed."
+      when: web_service_name == ""
