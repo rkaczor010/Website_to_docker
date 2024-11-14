@@ -32,7 +32,7 @@
   debug:
     msg: "Detected web service binary name: {{ web_service_name }}"
 
-- name: No web service detected
+- name: Fail playbook if no web service detected
   debug:
-    msg: "No web service is installed."
+    fail: "No web service is installed."
   when: web_service_name == ""
