@@ -1,12 +1,21 @@
-- name: Slurp the file
-  slurp:
-    src: "{{ file_path }}"
-  register: slurped_file
+- name: Find all .conf and .load files under /etc/apache2/
+  find:
+    paths: "/etc/apache2"
+    recurse: yes
+    patterns: "*.conf"
+  register: conf_files
 
-- name: Extract and clean the content after line starting with search_string
+- name: Find all .load files under /etc/apache2/
+  find:
+    paths: "/etc/apache2"
+    recurse: yes
+    patterns: "*.load"
+  register: load_files
+
+- name: Combine the results and display all files
   set_fact:
-    result: "{{ (slurped_file.content | b64decode).split('\n') | selectattr('startswith', search_string) | map('regex_replace', '^' + search_string + '\\s*', '') | first | regex_replace('\\s+', '') }}"
+    all_files: "{{ conf_files.files + load_files.files }}"
 
-- name: Display the result
+- name: Display all the matching files
   debug:
-    msg: "{{ result }}"
+    msg: "{{ all_files | map(attribute='path') | list }}"
