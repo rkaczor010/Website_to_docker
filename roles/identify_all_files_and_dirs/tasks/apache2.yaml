@@ -16,6 +16,35 @@
   set_fact:
     all_files: "{{ conf_files.files + load_files.files }}"
 
-- name: Display all the matching files
+- name: Read the content of each file and filter out lines starting with #
+  set_fact:
+    non_comment_lines: "{{ non_comment_lines | default([]) + [ item.path ] }}"
+  loop: "{{ all_files }}"
+  when: item.path is not none
+  register: filtered_files
+
+- name: Display filtered file paths, skipping comment lines
   debug:
-    msg: "{{ all_files | map(attribute='path') | list }}"
+    msg: "{{ filtered_files.results | map(attribute='item.path') | list }}"
+
+# - name: Find all .conf and .load files under /etc/apache2/
+#   find:
+#     paths: "/etc/apache2"
+#     recurse: yes
+#     patterns: "*.conf"
+#   register: conf_files
+
+# - name: Find all .load files under /etc/apache2/
+#   find:
+#     paths: "/etc/apache2"
+#     recurse: yes
+#     patterns: "*.load"
+#   register: load_files
+
+# - name: Combine the results and display all files
+#   set_fact:
+#     all_files: "{{ conf_files.files + load_files.files }}"
+
+# - name: Display all the matching files
+#   debug:
+#     msg: "{{ all_files | map(attribute='path') | list }}"
