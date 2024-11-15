@@ -1,0 +1,31 @@
+- name: Recursively find all configuration files in /etc/apache2
+  find:
+    paths: /etc/apache2
+    recurse: yes
+    patterns: "*.conf"
+  register: apache_conf_files
+
+- name: Initialize an empty list to store all paths
+  set_fact:
+    extracted_paths: []
+
+- name: Read each configuration file and extract paths
+  slurp:
+    src: "{{ item.path }}"
+  loop: "{{ apache_conf_files.files }}"
+  register: file_contents
+
+- name: Extract directories and file paths using regex
+  set_fact:
+    extracted_paths: "{{ extracted_paths + (file_content['content'] | b64decode | regex_findall('(/[^\\s;]+)')) }}"
+  loop: "{{ file_contents.results }}"
+  loop_control:
+    loop_var: file_content
+
+- name: Remove duplicates from extracted paths
+  set_fact:
+    webservice_content_paths: "{{ extracted_paths | unique }}"
+
+- name: Display all extracted paths
+  debug:
+    var: webservice_content_paths
