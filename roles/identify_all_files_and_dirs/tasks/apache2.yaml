@@ -28,9 +28,17 @@
     paths_found: "{{ paths_found | default([]) + (item.content | b64decode | regex_findall('(?:^|\\s)(/([a-zA-Z0-9_\\-\\/]+))(\\s|$)')) }}"
   loop: "{{ file_contents.results }}"
 
+- name: Clean up paths by removing unwanted characters like newline and space
+  set_fact:
+    cleaned_paths: "{{ paths_found | map('regex_replace', '[\\n\\r\\s]+', '') | selectattr('search', '^/') | list }}"
+
+- name: Remove duplicate paths
+  set_fact:
+    unique_paths: "{{ cleaned_paths | unique }}"
+
 - name: Display all found valid paths
   debug:
-    msg: "{{ paths_found | unique }}"
+    msg: "{{ unique_paths }}"
 
 # - name: Find all .conf and .load files under /etc/apache2/
 #   find:
