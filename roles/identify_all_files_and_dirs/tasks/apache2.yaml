@@ -1,4 +1,3 @@
-
 - name: Find all .conf and .load files under /etc/apache2/
   find:
     paths: "/etc/apache2"
@@ -30,7 +29,7 @@
 
 - name: Clean up paths by removing unwanted characters like newline and space
   set_fact:
-    cleaned_paths: "{{ paths_found | map('regex_replace', '[\\n\\r\\s]+', '') | selectattr('search', '^/') | list }}"
+    cleaned_paths: "{{ paths_found | map('regex_replace', '[\\n\\r\\s]+', '') | select('match', '^/') | list }}"
 
 - name: Remove duplicate paths
   set_fact:
