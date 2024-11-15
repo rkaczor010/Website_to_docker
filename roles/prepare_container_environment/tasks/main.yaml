@@ -20,7 +20,7 @@
     shell: /bin/bash
 
 - name: Run rootless HTTPD container as podmanuser
-  community.podman.podman_container:
+  containers.podman.podman_container:
     name: httpd-container
     image: httpd
     state: started
