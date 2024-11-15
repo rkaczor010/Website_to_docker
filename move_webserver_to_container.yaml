@@ -6,4 +6,4 @@
   roles:
     - name: identify_web_service
     - name: find_website_content
-    - name: prepare_docker_environment
+    - name: prepare_container_environment
