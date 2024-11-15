@@ -1,8 +1,21 @@
+# - name: Search for DocumentRoot directive in Apache2 config files
+#   command: grep -r "DocumentRoot" /etc/apache2/sites-available/
+#   register: apache_documentroot
+#   failed_when: false
+
+# - name: Display DocumentRoot results
+#   debug:
+#     msg: "{{ apache_documentroot.stdout_lines }}"
+
 - name: Search for DocumentRoot directive in Apache2 config files
   command: grep -r "DocumentRoot" /etc/apache2/sites-available/
   register: apache_documentroot
   failed_when: false
 
-- name: Display DocumentRoot results
+- name: Extract and filter unique DocumentRoot paths
+  set_fact:
+    document_roots: "{{ apache_documentroot.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
+
+- name: Display unique DocumentRoot paths
   debug:
-    msg: "{{ apache_documentroot.stdout_lines }}"
+    msg: "{{ document_roots }}"
