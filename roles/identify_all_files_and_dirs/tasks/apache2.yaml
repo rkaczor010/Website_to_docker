@@ -4,15 +4,15 @@
 
 - name: Parse Server Root from apache2ctl output
   set_fact:
-    server_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"(.*?)\"') | first }}"
+    server_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"') }}"
 
 - name: Parse Suexec Bin from apache2ctl output
   set_fact:
-    suexec_bin: "{{ apache_output.stdout | regex_search('SUEXEC_BIN=\"(.*?)\"') | first }}"
+    suexec_bin: "{{ apache_output.stdout | regex_search('SUEXEC_BIN=\"([^\"]+)\"') }}"
 
 - name: Parse Default Error Log from apache2ctl output
   set_fact:
-    error_log: "{{ apache_output.stdout | regex_search('DEFAULT_ERRORLOG=\"(.*?)\"') | first }}"
+    error_log: "{{ apache_output.stdout | regex_search('DEFAULT_ERRORLOG=\"([^\"]+)\"') }}"
 
 - name: Show parsed values
   debug:
