@@ -24,7 +24,7 @@
 
 - name: Extract paths from the file content excluding comment lines
   set_fact:
-    paths_found: "{{ paths_found | default([]) + (item.content | b64decode | splitlines() | selectattr('startswith', '#', invert=true) | map('regex_replace', '\\s*#.*$', '') | selectattr('search', '^/|^\\w') ) }}"
+    paths_found: "{{ paths_found | default([]) + (item.content | b64decode | regex_findall('(?:^|\\s)(/\\S+|\\S+/\\S+)(?=\\s|$)')) }}"
   loop: "{{ file_contents.results }}"
 
 - name: Display all found paths
