@@ -22,7 +22,7 @@
 - name: Run rootless HTTPD container as podmanuser
   containers.podman.podman_container:
     name: httpd-container
-    image: httpd
+    image: docker.io/library/httpd
     state: started
     restart_policy: always
     ports:
