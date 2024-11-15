@@ -12,20 +12,24 @@
     patterns: "*.load"
   register: load_files
 
-- name: Combine the results and display all files
+- name: Combine the results into a single list
   set_fact:
     all_files: "{{ conf_files.files + load_files.files }}"
 
-- name: Read the content of each file and filter out lines starting with #
-  set_fact:
-    non_comment_lines: "{{ non_comment_lines | default([]) + [ item.path ] }}"
+- name: Read the content of each file
+  slurp:
+    src: "{{ item.path }}"
   loop: "{{ all_files }}"
-  when: item.path is not none
-  register: filtered_files
+  register: file_contents
 
-- name: Display filtered file paths, skipping comment lines
+- name: Extract paths from the file content excluding comment lines
+  set_fact:
+    paths_found: "{{ paths_found | default([]) + (item.content | b64decode | splitlines() | selectattr('startswith', '#', invert=true) | map('regex_replace', '\\s*#.*$', '') | selectattr('search', '^/|^\\w') ) }}"
+  loop: "{{ file_contents.results }}"
+
+- name: Display all found paths
   debug:
-    msg: "{{ filtered_files.results | map(attribute='item.path') | list }}"
+    msg: "{{ paths_found | unique }}"
 
 # - name: Find all .conf and .load files under /etc/apache2/
 #   find:
