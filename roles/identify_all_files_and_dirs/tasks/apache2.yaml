@@ -8,4 +8,4 @@
 
 - name: PRint
   debug:
-    msg: "server_root"
+    msg: "{{ server_root }}"
