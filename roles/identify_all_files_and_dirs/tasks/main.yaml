@@ -1,8 +1,3 @@
-- name: Identify all files and directories paths in config files
-  hosts: all
-  become: true
-  gather_facts: true
-  tasks:
-    - name: Include tasks for apache2 webservice
-      include_tasks: apache2.yaml
-      when: web_service_name == "apache2"
+- name: Include tasks for apache2 webservice
+  include_tasks: apache2.yaml
+  when: web_service_name == "apache2"

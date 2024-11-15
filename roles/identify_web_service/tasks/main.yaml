@@ -1,8 +1,3 @@
-- name: Identify web service
-  hosts: all
-  become: true
-  gather_facts: true
-  tasks:
-    - name: Include tasks for Ubuntu
-      include_tasks: ubuntu.yaml
-      when: ansible_facts['os_family'] == "Debian" and ansible_facts['distribution'] == "Ubuntu"
+- name: Include tasks for Ubuntu
+  include_tasks: ubuntu.yaml
+  when: ansible_facts['os_family'] == "Debian" and ansible_facts['distribution'] == "Ubuntu"
