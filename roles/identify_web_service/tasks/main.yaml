@@ -1,4 +1,4 @@
-- name: Move website to docker
+- name: Identify web service
   hosts: all
   become: true
   gather_facts: true

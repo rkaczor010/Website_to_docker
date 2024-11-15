@@ -35,4 +35,4 @@
 - name: Fail playbook if no web service detected
   debug:
     fail: "No web service is installed."
-  when: web_service_name == ""
+  when: web_service_name is not defined
