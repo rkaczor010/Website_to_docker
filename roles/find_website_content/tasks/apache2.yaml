@@ -1,0 +1,8 @@
+- name: Search for DocumentRoot directive in Apache2 config files
+      command: grep -r "DocumentRoot" /etc/apache2/sites-available/
+      register: apache_documentroot
+      failed_when: false
+
+    - name: Display DocumentRoot results
+      debug:
+        msg: "{{ apache_documentroot.stdout_lines }}"

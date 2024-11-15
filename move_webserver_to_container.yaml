@@ -5,4 +5,4 @@
   become: true
   roles:
     - name: identify_web_service
-    - name: identify_all_files_and_dirs
+    - name: find_website_content
