@@ -1,17 +1,12 @@
-- name: Run apache2ctl -V command
-  command: apache2ctl -V
-  register: apache_output
+- name: Slurp the file
+  slurp:
+    src: "{{ file_path }}"
+  register: slurped_file
 
-- name: Parse HTTPD_ROOT from apache2ctl output
+- name: Extract and clean the content after line starting with search_string
   set_fact:
-    httpd_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"') | first }}"
+    result: "{{ (slurped_file.content | b64decode).split('\n') | selectattr('startswith', search_string) | map('regex_replace', '^' + search_string + '\\s*', '') | first | regex_replace('\\s+', '') }}"
 
-- name: Parse SERVER_CONFIG_FILE from apache2ctl output
-  set_fact:
-    server_config_file: "{{ apache_output.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"') | first }}"
-
-- name: Show parsed values
+- name: Display the result
   debug:
-    msg:
-      - "{{ httpd_root }}"
-      - "{{ server_config_file }}"
+    msg: "{{ result }}"
