@@ -5,3 +5,7 @@
 - name: Parse Server Root from apache2ctl output
   set_fact:
     server_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"(.*?)\"') }}"
+
+- name: PRint
+  debug:
+    msg: "server_root"

@@ -6,8 +6,3 @@
   roles:
     - name: identify_web_service
     - name: identify_all_files_and_dirs
-
-  tasks:
-    - name: de
-      debug:
-        msg: "{{ web_service_name }}"
