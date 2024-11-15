@@ -2,21 +2,16 @@
   command: apache2ctl -V
   register: apache_output
 
-- name: Parse Server Root from apache2ctl output
+- name: Parse HTTPD_ROOT from apache2ctl output
   set_fact:
-    server_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"') }}"
+    httpd_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"') | first }}"
 
-- name: Parse Suexec Bin from apache2ctl output
+- name: Parse SERVER_CONFIG_FILE from apache2ctl output
   set_fact:
-    suexec_bin: "{{ apache_output.stdout | regex_search('SUEXEC_BIN=\"([^\"]+)\"') }}"
-
-- name: Parse Default Error Log from apache2ctl output
-  set_fact:
-    error_log: "{{ apache_output.stdout | regex_search('DEFAULT_ERRORLOG=\"([^\"]+)\"') }}"
+    server_config_file: "{{ apache_output.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"') | first }}"
 
 - name: Show parsed values
   debug:
     msg:
-      - "Server Root: {{ server_root }}"
-      - "Suexec Bin: {{ suexec_bin }}"
-      - "Error Log: {{ error_log }}"
+      - "{{ httpd_root }}"
+      - "{{ server_config_file }}"
