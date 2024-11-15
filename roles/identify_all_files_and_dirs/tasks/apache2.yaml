@@ -1,3 +1,4 @@
+
 - name: Find all .conf and .load files under /etc/apache2/
   find:
     paths: "/etc/apache2"
@@ -22,12 +23,12 @@
   loop: "{{ all_files }}"
   register: file_contents
 
-- name: Extract paths from the file content excluding comment lines
+- name: Extract paths from the file content excluding comment lines and invalid paths
   set_fact:
-    paths_found: "{{ paths_found | default([]) + (item.content | b64decode | regex_findall('(?:^|\\s)(/\\S+|\\S+/\\S+)(?=\\s|$)')) }}"
+    paths_found: "{{ paths_found | default([]) + (item.content | b64decode | regex_findall('(?:^|\\s)(/([a-zA-Z0-9_\\-\\/]+))(\\s|$)')) }}"
   loop: "{{ file_contents.results }}"
 
-- name: Display all found paths
+- name: Display all found valid paths
   debug:
     msg: "{{ paths_found | unique }}"
 
