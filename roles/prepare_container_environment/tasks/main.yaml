@@ -1,51 +1,30 @@
-- name: Install Podman
+- name: Install Podman and dependencies
   apt:
-    name: podman
+    name:
+      - podman
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - uidmap
+      - dbus-user-session
     state: present
+    update_cache: yes
 
-# - name: Install required dependencies
-#   apt:
-#     name:
-#       - apt-transport-https
-#       - ca-certificates
-#       - curl
-#       - gnupg
-#       - lsb-release
-#     state: present
-#     update_cache: yes
+- name: Create a user for rootless containers
+  user:
+    name: containers
+    state: present
+    create_home: yes
+    shell: /bin/bash
 
-# - name: Download Docker's official GPG key
-#   get_url:
-#     url: https://download.docker.com/linux/ubuntu/gpg
-#     dest: /tmp/docker_gpg_key
-
-# - name: Add Docker's official GPG key
-#   apt_key:
-#     file: /tmp/docker_gpg_key
-#     state: present
-    
-# - name: Set up Docker stable repository
-#   command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-#   become: true
-
-# - name: Update apt cache to include Docker repository
-#   apt:
-#     update_cache: yes
-#   become: true
-
-# - name: Install Docker
-#   apt:
-#     name: docker-ce
-#     state: present
-#   become: true
-
-# - name: Start and enable Docker service
-#   service:
-#     name: docker
-#     state: started
-#     enabled: yes
-
-# - name: Pull Apache2 Docker image
-#   docker_image:
-#     name: httpd
-#     source: pull
+- name: Run rootless HTTPD container as podmanuser
+  docker_container:
+    name: httpd-container
+    image: httpd
+    state: started
+    restart_policy: always
+    ports:
+      - "8080:80"
+  become_user: containers
