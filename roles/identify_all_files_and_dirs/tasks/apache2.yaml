@@ -1,16 +1,7 @@
-- name: Get Apache configuration file paths
-  command: apache2ctl -V | grep SERVER_CONFIG_FILE
-  register: apache_config_path
+- name: Run apache2ctl -V command
+  command: apache2ctl -V
+  register: apache_output
 
-- name: Get Apache sites-available directory
-  command: apache2ctl -V | grep SERVER_ROOT
-  register: apache_root_path
-
-- name: Read the Apache default config file to find DocumentRoot and Listen ports
-  command: cat {{ apache_config_path.stdout }} | grep -E 'DocumentRoot|Listen|SSLCertificate'
-  register: apache_config_details
-  failed_when: false
-
-- name: Display configuration details
-  debug:
-    var: apache_config_details.stdout_lines
+- name: Parse Server Root from apache2ctl output
+  set_fact:
+    server_root: "{{ apache_output.stdout | regex_search('HTTPD_ROOT=\"(.*?)\"') }}"
