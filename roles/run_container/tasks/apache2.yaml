@@ -53,7 +53,7 @@
 
 - name: Remove not used images
   command:
-    cmd: podman image ls -a | grep '<none>' | awk '{print $3}' | xargs sudo podman rmi -f
+    cmd: podman image prune --force
 
 
 

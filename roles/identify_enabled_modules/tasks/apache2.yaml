@@ -2,9 +2,13 @@
   command: apache2ctl -M
   register: modules
 
+- name: Show raw output of apache2ctl -M
+  debug:
+    var: modules.stdout_lines
+
 - name: Parse enabled Apache2 modules
   set_fact:
-    apache2_enabled_modules: "{{ modules.stdout_lines[1:] | map('regex_search', '^(\\S+)') | select('string') | list }}"
+    apache2_enabled_modules: "{{ modules.stdout_lines[1:] | map('regex_replace', '^\\s*(\\S+)', '\\1') | select('string') | list }}"
 
 - name: Display enabled Apache2 modules
   debug:
