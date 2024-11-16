@@ -1,11 +1,11 @@
-    - name: Retrieve enabled Apache2 modules
-      command: apache2ctl -M
-      register: modules
+- name: Retrieve enabled Apache2 modules
+  command: apache2ctl -M
+  register: modules
 
-    - name: Parse enabled Apache2 modules
-      set_fact:
-        apache2_enabled_modules: "{{ modules.stdout_lines | map('regex_search', '^[ ]*(\\S+)') | select('string') | list }}"
+- name: Parse enabled Apache2 modules
+  set_fact:
+    apache2_enabled_modules: "{{ modules.stdout_lines[1:] | map('regex_search', '^(\\S+)') | select('string') | list }}"
 
-    - name: Display enabled Apache2 modules
-      debug:
-        var: apache2_enabled_modules
+- name: Display enabled Apache2 modules
+  debug:
+    var: apache2_enabled_modules
