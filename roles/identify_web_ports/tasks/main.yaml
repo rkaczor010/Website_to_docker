@@ -5,8 +5,8 @@
 - name: Include tasks for apache2 webservice
   include_tasks: apache2.yaml
   when: web_service_name == "apache2"
-  
+
 - name: Set webservice_ports variable
-  set_vars:
+  set_facts:
     webservice_ports: "{{ apache2_ports }}"
   when: web_service_name == "apache2"
