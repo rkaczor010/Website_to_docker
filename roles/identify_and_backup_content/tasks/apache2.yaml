@@ -23,11 +23,11 @@
 
 - name: Extract and filter unique DocumentRoot paths
   set_fact:
-    document_roots: "{{ apache2_documentroot_otput.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
+    apache2_document_roots: "{{ apache2_documentroot_otput.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
 
 - name: Display unique DocumentRoot paths
   debug:
-    msg: "{{ apache2_document_root }}"
+    msg: "{{ apache2_document_roots }}"
 
 - name: Create directory for apache2 backup in {{ rootless_user }} home directory
   file:
@@ -52,7 +52,7 @@
     directory_mode: preserve
     mode: preserve
     force: true
-  loop: "{{ apache2_document_root }}"
+  loop: "{{ apache2_document_roots }}"
 
 - name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
   ansible.builtin.file:
