@@ -11,7 +11,7 @@
     create_home: yes
     shell: /bin/bash
 
-- name: Run rootless apache2 container as podmanuser
+- name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
     name: "{{ container_name }}"
     image: "{{ container_image }}"
@@ -36,6 +36,5 @@
     group: "{{ rootless_user }}"
     directory_mode: preserve
     mode: preserve
-    force: yes
-    recurse: yes
+    force: true
   loop: "{{ apache2_content_dirs }}"
