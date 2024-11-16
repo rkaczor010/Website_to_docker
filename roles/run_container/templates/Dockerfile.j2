@@ -1,19 +1,22 @@
 FROM {{ ubuntu_container_image }}
 
-COPY {{ apache2_config_path }} {{ apache2_config_path }}
 
-{% for dir in apache2_content_path %}
-COPY {{ dir }} {{ dir }}
-{% endfor %}
 
 RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y apache2
 RUN apt-get install -y systemctl
 
-{% for module in apache2_enabled_modules %}
-RUN apt-get install -y {{ module }}
+COPY {{ apache2_config_path }} {{ apache2_config_path }}
+
+{% for dir in apache2_content_path %}
+COPY {{ dir }} {{ dir }}
 {% endfor %}
+
+
+# {% for module in apache2_enabled_modules %}
+# RUN apt-get install -y {{ module }}
+# {% endfor %}
 
 RUN systemctl enable --now apache2
 
