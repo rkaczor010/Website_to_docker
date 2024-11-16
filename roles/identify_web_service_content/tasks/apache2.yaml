@@ -6,11 +6,11 @@
 
 - name: Extract Apache2 configuration file path
   set_fact:
-    apache_config_file_path: "{{ apache_config_file.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"', '\\1') | default('/etc/apache2/apache2.conf') }}"
+    apache_config_file_path: "{{ apache_config_file.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"', '\\1') | first }}"
 
 - name: Extract Apache2 configuration root path
   set_fact:
-    apache_root_config_path: "{{ apache_config_file.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"', '\\1') | default('/etc/apache2/apache2.conf') }}"
+    apache_root_config_path: "{{ apache_config_file.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"', '\\1') | first }}"
 
 - name: Extract Apache2 configuration directory
   set_fact:
