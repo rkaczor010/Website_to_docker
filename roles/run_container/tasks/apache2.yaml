@@ -35,12 +35,24 @@
 - name: Copy apache2 config to container
   command:
     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
-  loop: "{{ (apache2_config_path if apache2_config_path is iterable else [apache2_config_path]) }}"
+  loop: "{{ apache2_config_path }}"
+  when: apache2_config_path is iterable
 
 - name: Copy apache2 config to container
   command:
+    cmd: 'podman cp {{ apache2_config_path }} {{ tmp_container_name }}:{{ apache2_config_path }}'
+  when: apache2_config_path not iterable
+
+- name: Copy apache2 content to container
+  command:
     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
-  loop: "{{ (apache2_content_path if apache2_content_path is iterable else [apache2_content_path]) }}"
+  loop: "{{ apache2_content_path }}"
+  when: apache2_config_path is iterable
+
+- name: Copy apache2 content to container
+  command:
+    cmd: 'podman cp {{ apache2_content_path }} {{ tmp_container_name }}:{{ apache2_content_path }}'
+  when: apache2_content_path not iterable
 
 - name: Enable apache2 service on container
   containers.podman.podman_container_exec:
