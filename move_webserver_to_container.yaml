@@ -5,7 +5,8 @@
   become: true
   roles:
     - name: identify_web_service
-    - name: find_website_content
-    - name: prepare_container_environment
-      vars:
-        apache2_content_dirs: "{{ document_roots }}"
+    # - name: find_website_content
+    # - name: prepare_container_environment
+    #   vars:
+    #     apache2_content_dirs: "{{ document_roots }}"
+    - name: identify_web_service_content

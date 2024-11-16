@@ -1,0 +1,3 @@
+- name: Include tasks for apache2 webservice
+  include_tasks: apache2.yaml
+  when: web_service_name == "apache2"

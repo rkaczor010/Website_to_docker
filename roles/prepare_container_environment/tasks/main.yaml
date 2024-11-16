@@ -32,9 +32,14 @@
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: /home/{{ rootless_user }}/apache2{{ item }}
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
     directory_mode: preserve
     mode: preserve
     force: true
   loop: "{{ apache2_content_dirs }}"
+
+- name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
+  ansible.builtin.file:
+    path: /home/{{ rootless_user }}/apache2
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    recurse: yes

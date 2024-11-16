@@ -1,0 +1,11 @@
+- name: Get Apache2 configuration directory
+  ansible.builtin.shell: apachectl -V | grep -i 'SERVER_CONFIG_FILE'
+  register: apache_config_file
+
+- name: Extract Apache2 configuration directory
+  set_fact:
+    apache_config_dir: "{{ apache_config_file.stdout | regex_search('/etc/apache2/[^ ]*') | dirname }}"
+
+- name: Display Apache2 configuration directory
+  debug:
+    msg: "Apache2 configuration directory is: {{ apache_config_dir }}"
