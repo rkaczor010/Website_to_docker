@@ -31,10 +31,18 @@
     - apt-get upgrade -y
     - apt-get install -y apache2
 
+- name: Set directories list
+  set_fact:
+    apache2_config_path_list: "{{ (apache2_config_path if apache2_config_path is iterable else [apache2_config_path]) }}"
+    apache2_content_path_list: "{{ (apache2_content_path if apache2_content_path is iterable else [apache2_content_path]) }}"
+
+
 - name: Copy apache2 config files and website content to container
   command:
     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
-  loop: "{{ (apache2_config_path if apache2_config_path is iterable else [apache2_config_path]) | union(apache2_content_path if apache2_content_path is iterable else [apache2_content_path]) }}"
+  loop:
+    - "{{ apache2_config_path_list }}"
+    - "{{ apache2_content_path_list }}"
 
 - name: Enable apache2 service on container
   containers.podman.podman_container_exec:
