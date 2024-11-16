@@ -6,14 +6,53 @@
   debug:
     msg: "{{ webservice_ports_mappings }}"
 
-- name: Run rootless apache2 container as {{ rootless_user }} user
+
+- name: Pull ubuntu:22.04 image
+  containers.podman.podman_image:
+    name: ubuntu
+    tag: "22.04"
+    source: pull
+
+- name: Create a container from the ubuntu:22.04 image
   containers.podman.podman_container:
-    name: "{{ container_name }}"
-    image: "{{ container_image }}"
+    name: ubuntu_apache2_container
+    image: ubuntu:22.04
     state: started
-    restart_policy: always
-    ports: "{{ webservice_ports_mappings }}"
-    volumes:
-      - /etc/apache2/apache2.conf:/usr/local/apache2/conf/httpd.conf
-      - "/etc/apache2:/etc/apache2"
-      - "/var/www:/var/www" 
+    command: sleep infinity  # Keep the container running
+
+- name: Install updates and apache2 package inside the container
+  containers.podman.podman_container.exec:
+    container: ubuntu_apache2_container
+    cmd: |
+      apt-get update -y
+      apt-get upgrade -y
+      apt-get install -y apache2
+
+- name: Commit the modified container to a new image
+  docker_image:
+    name: my_custom_ubuntu_apache
+    tag: latest
+    source: container
+    container: ubuntu_apache2_container
+
+- name: Stop the container
+  docker_container:
+    name: ubuntu_apache2_container
+    state: stopped
+
+- name: Remove the container
+  community.general.podman_container:
+    name: my_podman_container
+    state: absent
+
+# - name: Run rootless apache2 container as {{ rootless_user }} user
+#   containers.podman.podman_container:
+#     name: "{{ container_name }}"
+#     image: "{{ container_image }}"
+#     state: started
+#     restart_policy: always
+#     ports: "{{ webservice_ports_mappings }}"
+#     volumes:
+#       - /etc/apache2/apache2.conf:/usr/local/apache2/conf/httpd.conf
+#       - "/etc/apache2:/etc/apache2"
+#       - "/var/www:/var/www" 
