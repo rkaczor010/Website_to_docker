@@ -36,6 +36,12 @@
     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
   loop: "{{ (apache2_config_path if apache2_config_path is list else [apache2_config_path]) + (apache2_content_path if apache2_content_path is list else [apache2_content_path]) }}"
 
+- name: Enable apache2 service on container
+  containers.podman.podman_container_exec:
+    name: "{{ tmp_container_name }}"
+    argv: 
+      - /bin/bash
+    command: 'service apache2 start'
 
 - name: Commit the modified container to a new image
   command:

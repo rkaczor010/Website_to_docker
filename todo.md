@@ -3,3 +3,4 @@
 3. systemd entity dla zarzadzania kontenerem
 4. podman detach container
 5. webservice ssl
+6. spr jakie moduly sa dla apache2 i zainstalowanie je na kontenerze apachectl -M
