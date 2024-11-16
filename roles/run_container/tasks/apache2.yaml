@@ -22,11 +22,12 @@
 - name: Create Dockerfile from template
   template:
     src: templates/Dockerfile.j2
-    dest: /home/{{ rootless_user }}/podman/Dockerfile
+    dest: /home/{{ rootless_user }}/apache2/Dockerfile
 
 - name: Build container image
   command: 
-    cmd: podman build -t {{ custom_apache2_container_image }} -f /home/{{ rootless_user }}/podman/Dockerfile
+    cmd: podman build -t {{ custom_apache2_container_image }} .
+    chdir: /home/{{ rootless_user }}/apache2
 
 - name: Remove Dockerfile
   file:
