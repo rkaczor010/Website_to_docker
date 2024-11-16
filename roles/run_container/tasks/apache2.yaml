@@ -24,6 +24,12 @@
     src: templates/Dockerfile.j2
     dest: /home/{{ rootless_user }}/apache2/Dockerfile
 
+- name: Create entrypoint.sh from template
+  template:
+    src: templates/entrypoint.sh
+    dest: /home/{{ rootless_user }}/apache2/entrypoint.sh
+
+
 - name: Build container image
   command: 
     cmd: podman build -t {{ custom_apache2_container_image }} .
