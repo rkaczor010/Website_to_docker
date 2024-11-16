@@ -1,4 +1,2 @@
 container_name: httpd
 container_image: docker.io/library/httpd
-container_ports_mappings:
-  - "8080:80"

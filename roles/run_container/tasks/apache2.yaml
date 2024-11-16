@@ -1,11 +1,14 @@
+- name: Create ports mapping list
+  set_fact:
+    webservice_ports_mappings: "{{ webservice_ports | map('regex_replace', '(.*)', '\\1:\\1') | list }}"
+
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
     name: "{{ container_name }}"
     image: "{{ container_image }}"
     state: started
     restart_policy: always
-    ports:
-      - "8080:80"
+    ports: "{{ webservice_ports_mappings }}"
     volumes:
-      - "/etc/apache2:/etc/apache2"  # Mount Apache configuration directory
+      - "/etc/apache2:/etc/apache2"
       - "/var/www:/var/www" 

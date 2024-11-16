@@ -1,1 +1,2 @@
 rootless_user: "{{ notdefined | mandatory(msg='This variable is required.') }}"
+webservice_ports: "{{ notdefined | mandatory(msg='This variable is required.') }}"
