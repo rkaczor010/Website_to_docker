@@ -8,10 +8,14 @@
   set_fact:
     apache_config_file_path: "{{ apache_config_file.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"', '\\1') | default('/etc/apache2/apache2.conf') }}"
 
+- name: Extract Apache2 configuration root path
+  set_fact:
+    apache_root_config_path: "{{ apache_config_file.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"', '\\1') | default('/etc/apache2/apache2.conf') }}"
+
 - name: Extract Apache2 configuration directory
   set_fact:
-    apache_config_dir: "{{ apache_config_file_path }}"
+    apache_config_path: "{{ apache_root_config_path }}/{{ apache_config_file_path }}"
 
 - name: Display Apache2 configuration directory
   debug:
-    msg: "Apache2 configuration directory is: {{ apache_config_dir }}"
+    msg: "Apache2 configuration directory is: {{ apache_config_path }}"
