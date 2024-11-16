@@ -5,7 +5,7 @@
 
 - name: Extract Apache2 ports (clean up extra spaces/tabs)
   set_fact:
-    apache_ports: "{{ apache2_listen_ports.stdout_lines | map('regex_replace', '^\\s*Listen\\s*', '') | map('trim') | list }}"
+    apache_ports: "{{ apache2_listen_ports.stdout_lines | map('regex_replace', '^\\s*Listen\\s*', '') | map('trim') | unique | list }}"
 
 - name: Display Apache2 ports
   debug:

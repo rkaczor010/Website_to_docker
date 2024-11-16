@@ -8,7 +8,3 @@ apt_packages:
   - uidmap
   - dbus-user-session
 rootless_user: "{{ notdefined | mandatory(msg='This variable is required.') }}"
-container_name: httpd
-container_image: docker.io/library/httpd
-container_ports_mappings:
-  - "8080:80"

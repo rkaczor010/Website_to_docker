@@ -11,12 +11,5 @@
     create_home: yes
     shell: /bin/bash
 
-# - name: Run rootless apache2 container as {{ rootless_user }} user
-#   containers.podman.podman_container:
-#     name: "{{ container_name }}"
-#     image: "{{ container_image }}"
-#     state: started
-#     restart_policy: always
-#     ports: "{{ container_ports_mappings }}"
-#   #become_user: containers 
+
 
