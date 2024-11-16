@@ -34,6 +34,10 @@
     path: /home/{{ rootless_user }}/podman/Dockerfile
     state: absent
 
+- name: Prune images
+  command:
+    cmd: podman image prune --force
+
 
 
 
