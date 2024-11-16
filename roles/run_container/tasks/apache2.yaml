@@ -11,88 +11,115 @@
   containers.podman.podman_image:
     name: "{{ ubuntu_container_image }}"
 
-- name: Create a container from the "{{ ubuntu_container_image }}" image
-  containers.podman.podman_container:
-    name: "{{ tmp_container_name }}"
-    image: "{{ ubuntu_container_image }}"
-    state: started
-    detach: true
-    interactive: true
-    tty: true   
+- name: Create directory for Dockerfile
+  file:
+    path: /home/{{ rootless_user }}/podman
+    state: directory
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    mode: '0755'
 
-- name: Install updates and apache2 package inside the container
-  containers.podman.podman_container_exec:
-    name: "{{ tmp_container_name }}"
-    argv: 
-      - /bin/bash
-    command: "{{ item }}"
-  loop:
-    - apt-get update -y
-    - apt-get upgrade -y
-    - apt-get install -y apache2
-    - apt-get install -y systemctl
+- name: Create Dockerfile from template
+  template:
+    src: templates/Dockerfile.j2
+    dest: /home/{{ rootless_user }}/podman/Dockerfile
 
-# - name: Install apache2 modules inside the container
+- name: Build container image
+  command: 
+    cmd: podman build -t {{ custom_apache2_container_image }} -f /home/{{ rootless_user }}/podman/Dockerfile
+
+- name: Remove Dockerfile
+  file:
+    path: /home/{{ rootless_user }}/podman/Dockerfile
+    state: absent
+
+
+
+
+
+
+# - name: Create a container from the "{{ ubuntu_container_image }}" image
+#   containers.podman.podman_container:
+#     name: "{{ tmp_container_name }}"
+#     image: "{{ ubuntu_container_image }}"
+#     state: started
+#     detach: true
+#     interactive: true
+#     tty: true   
+
+# - name: Install updates and apache2 package inside the container
 #   containers.podman.podman_container_exec:
 #     name: "{{ tmp_container_name }}"
 #     argv: 
 #       - /bin/bash
 #     command: "{{ item }}"
-#   loop: "{{ v}"
+#   loop:
+#     - apt-get update -y
+#     - apt-get upgrade -y
+#     - apt-get install -y apache2
+#     - apt-get install -y systemctl
 
-- name: Copy apache2 config to container
-  command:
-    cmd: 'podman cp {{ apache2_config_path }} {{ tmp_container_name }}:{{ apache2_config_path }}'
+# # - name: Install apache2 modules inside the container
+# #   containers.podman.podman_container_exec:
+# #     name: "{{ tmp_container_name }}"
+# #     argv: 
+# #       - /bin/bash
+# #     command: "{{ item }}"
+# #   loop: "{{ v}"
 
-- name: Copy apache2 content to container
-  command:
-    cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
-  loop: "{{ apache2_content_path }}"
+# - name: Copy apache2 config to container
+#   command:
+#     cmd: 'podman cp {{ apache2_config_path }} {{ tmp_container_name }}:{{ apache2_config_path }}'
 
-- name: Enable apache2 service on container
-  containers.podman.podman_container_exec:
-    name: "{{ tmp_container_name }}"
-    argv: 
-      - /bin/bash
-    command: 'systemctl enable --now apache2'
+# - name: Copy apache2 content to container
+#   command:
+#     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
+#   loop: "{{ apache2_content_path }}"
 
-- name: Start apache2 service on container
-  containers.podman.podman_container_exec:
-    name: "{{ tmp_container_name }}"
-    argv: 
-      - /bin/bash
-    command: 'systemctl start apache2'
+# - name: Enable apache2 service on container
+#   containers.podman.podman_container_exec:
+#     name: "{{ tmp_container_name }}"
+#     argv: 
+#       - /bin/bash
+#     command: 'systemctl enable --now apache2'
+
+# - name: Start apache2 service on container
+#   containers.podman.podman_container_exec:
+#     name: "{{ tmp_container_name }}"
+#     argv: 
+#       - /bin/bash
+#     command: 'systemctl start apache2'
 
 
-- name: Commit the modified container to a new image
-  command:
-    cmd: podman commit {{ tmp_container_name }} {{ custom_apache2_container_image }}
+# - name: Commit the modified container to a new image
+#   command:
+#     cmd: podman commit {{ tmp_container_name }} {{ custom_apache2_container_image }}
 
-- name: Stop the container
-  containers.podman.podman_container:
-    name: "{{ tmp_container_name }}"
-    state: stopped
+# - name: Stop the container
+#   containers.podman.podman_container:
+#     name: "{{ tmp_container_name }}"
+#     state: stopped
 
-- name: Remove the container
-  containers.podman.podman_container:
-    name: "{{ tmp_container_name }}"
-    state: absent
+# - name: Remove the container
+#   containers.podman.podman_container:
+#     name: "{{ tmp_container_name }}"
+#     state: absent
 
-- name: Remove {{ ubuntu_container_image }} image
-  containers.podman.podman_image:
-    name: "{{ ubuntu_container_image }}"
+# - name: Remove {{ ubuntu_container_image }} image
+#   containers.podman.podman_image:
+#     name: "{{ ubuntu_container_image }}"
 
-- name: Run rootless apache2 container as {{ rootless_user }} user
-  containers.podman.podman_container:
-    name: "{{ apache2_container_name }}"
-    image: "{{ custom_apache2_container_image }}"
-    state: started
-    restart_policy: always
-    ports: "{{ webservice_ports_mappings }}"
-    # volumes:
-    #   - "/etc/apache2:/etc/apache2/"
-    #   - "/var/www:/var/www" 
-    detach: true
-    interactive: true
-    tty: true
-    #command: systemctl enable --now httpd
+# - name: Run rootless apache2 container as {{ rootless_user }} user
+#   containers.podman.podman_container:
+#     name: "{{ apache2_container_name }}"
+#     image: "{{ custom_apache2_container_image }}"
+#     state: started
+#     restart_policy: always
+#     ports: "{{ webservice_ports_mappings }}"
+#     # volumes:
+#     #   - "/etc/apache2:/etc/apache2/"
+#     #   - "/var/www:/var/www" 
+#     detach: true
+#     interactive: true
+#     tty: true
+#     #command: systemctl enable --now httpd

@@ -1,0 +1,17 @@
+FROM {{ ubuntu_container_image }}
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y apache2
+RUN apt-get install -y systemctl
+
+COPY {{ apache2_config_path }} {{ apache2_config_path }}
+{% for dir in apache2_content_path %}
+COPY {{ dir }} {{ dir }}
+{% endfor %}
+
+{% for port in webservice_ports %}
+EXPOSE {{ port }}
+{% endfor %}
+
+CMD ["apachectl", "-D", "FOREGROUND"]
