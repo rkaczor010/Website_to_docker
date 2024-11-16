@@ -61,9 +61,9 @@
     state: started
     restart_policy: always
     ports: "{{ webservice_ports_mappings }}"
-    volumes:
-      - "/etc/apache2:/etc/apache2/"
-      - "/var/www:/var/www" 
+    # volumes:
+    #   - "/etc/apache2:/etc/apache2/"
+    #   - "/var/www:/var/www" 
     detach: true
     interactive: true
     tty: true   
