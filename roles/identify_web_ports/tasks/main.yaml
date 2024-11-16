@@ -1,12 +1,12 @@
-- name: Run tasks for apache2
-  block:
+- name: Include Ubuntu specific defaults
+  include_vars: defaults/apache2.yaml
   when: web_service_name == "apache2"
-    - name: Include Ubuntu specific defaults
-      include_vars: defaults/apache2.yaml
-  
-    - name: Include tasks for apache2 webservice
-      include_tasks: apache2.yaml
 
-    - name: Set webservice_ports variable
-      set_vars:
-        webservice_ports: "{{ apache2_ports }}"
+- name: Include tasks for apache2 webservice
+  include_tasks: apache2.yaml
+  when: web_service_name == "apache2"
+  
+- name: Set webservice_ports variable
+  set_vars:
+    webservice_ports: "{{ apache2_ports }}"
+  when: web_service_name == "apache2"
