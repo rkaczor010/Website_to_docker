@@ -15,3 +15,6 @@
     - name: identify_and_backup_content
     - name: identify_web_ports
     - name: run_container
+      vars:
+        apache2_config_path: "{{ apache2_root_path }}"
+        apache2_content_path: "{{ apache2_document_roots }}"

@@ -31,6 +31,11 @@
     - apt-get upgrade -y
     - apt-get install -y apache2
 
+- name: Copy apache2 config files and website content to container
+  command:
+    cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
+  loop: "{{ ( apache2_config_path | list) + ( apache2_content_path | list) }}"
+
 - name: Commit the modified container to a new image
   command:
     cmd: podman commit {{ tmp_container_name }} {{ custom_apache2_container_image }}
