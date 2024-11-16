@@ -7,7 +7,7 @@
     msg: "{{ webservice_ports_mappings }}"
 
 
-- name: Pull ubuntu:22.04 image
+- name: Pull {{ ubuntu_container_image }} image
   containers.podman.podman_image:
     name: "{{ ubuntu_container_image }}"
 
@@ -17,6 +17,8 @@
     image: "{{ ubuntu_container_image }}"
     state: started
     detach: true
+    interactive: true
+    tty: true   
 
 - name: Install updates and apache2 package inside the container
   containers.podman.podman_container_exec:
@@ -43,6 +45,10 @@
     name: "{{ tmp_container_name }}"
     state: absent
 
+- name: Remove {{ ubuntu_container_image }} image
+  containers.podman.podman_image:
+    name: "{{ ubuntu_container_image }}"
+
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
     name: "{{ apache2_container_name }}"
@@ -53,3 +59,4 @@
     volumes:
       - "/etc/apache2:/etc/apache2/"
       - "/var/www:/var/www" 
+
