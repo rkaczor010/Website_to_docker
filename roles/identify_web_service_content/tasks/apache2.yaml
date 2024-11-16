@@ -4,7 +4,7 @@
   failed_when: apache_config_file.rc != 0
   changed_when: false
 
-- name: Extract Apache2 configuration file
+- name: Extract Apache2 configuration file path
   set_fact:
     apache_config_file_path: "{{ apache_config_file.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"', '\\1') | default('/etc/apache2/apache2.conf') }}"
 
