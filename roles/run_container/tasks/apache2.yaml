@@ -21,7 +21,7 @@
 
 - name: Install updates and apache2 package inside the container
   containers.podman.podman_container_exec:
-    container: ubuntu_apache2_container
+    name: ubuntu_apache2_container
     argv: 
       - /bin/bash
     command: "{{ item }}"
