@@ -15,7 +15,7 @@ COPY {{ dir }} {{ dir }}
 
 
 {% for module in apache2_enabled_modules %}
-RUN apt-get install -y {{ module }}
+RUN a2enmod {{ module }}
 {% endfor %}
 
 COPY entrypoint.sh /entrypoint.sh
