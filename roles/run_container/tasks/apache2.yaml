@@ -31,11 +31,14 @@
     - apt-get install -y apache2
 
 - name: Commit the modified container to a new image
-  containers.podman.podman_image:
-    name: my_custom_ubuntu_apache
-    tag: latest
-    source: container
-    container: ubuntu_apache2_container
+  command:
+    cmd: podman commit ubuntu_apache2_container custom_apache_container:1
+
+  # containers.podman.podman_image:
+  #   name: my_custom_ubuntu_apache
+  #   tag: latest
+  #   source: container
+  #   container: ubuntu_apache2_container
 
 - name: Stop the container
   containers.podman.podman_container:
