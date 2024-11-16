@@ -1,5 +1,11 @@
 FROM {{ ubuntu_container_image }}
 
+COPY {{ apache2_config_path }} {{ apache2_config_path }}
+
+{% for dir in apache2_content_path %}
+COPY {{ dir }} {{ dir }}
+{% endfor %}
+
 RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y apache2
@@ -9,13 +15,10 @@ RUN apt-get install -y systemctl
 RUN apt-get install -y {{ module }}
 {% endfor %}
 
-COPY {{ apache2_config_path }} {{ apache2_config_path }}
-{% for dir in apache2_content_path %}
-COPY {{ dir }} {{ dir }}
-{% endfor %}
+RUN systemctl enable --now apache2
 
 {% for port in webservice_ports %}
 EXPOSE {{ port }}
 {% endfor %}
 
-CMD ["systemctl", "enable", "--now" "apache2"]
+CMD ["apachectl", "-D", "FOREGROUND"]
