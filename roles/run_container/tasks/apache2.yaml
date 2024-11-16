@@ -40,12 +40,20 @@
     path: /home/{{ rootless_user }}/podman/Dockerfile
     state: absent
 
-- name: Prune images
+- name: Run rootless apache2 container as {{ rootless_user }} user
+  containers.podman.podman_container:
+    name: "{{ apache2_container_name }}"
+    image: "{{ custom_apache2_container_image }}"
+    state: started
+    restart_policy: always
+    ports: "{{ webservice_ports_mappings }}"
+    detach: true
+    interactive: true
+    tty: true
+
+- name: Remove not used images
   command:
-    cmd: podman image prune --force
-
-
-
+    cmd: podman image ls -a | grep '<none>' | awk '{print $3}' | xargs sudo podman rmi -f
 
 
 

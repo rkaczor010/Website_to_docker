@@ -14,20 +14,15 @@ COPY {{ dir }} {{ dir }}
 {% endfor %}
 
 
-# {% for module in apache2_enabled_modules %}
-# RUN apt-get install -y {{ module }}
-# {% endfor %}
+{% for module in apache2_enabled_modules %}
+RUN apt-get install -y {{ module }}
+{% endfor %}
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# RUN service apache2 start
-# RUN a2dissite 000-default
-# RUN service apache2 reload
 
 {% for port in webservice_ports %}
 EXPOSE {{ port }}
 {% endfor %}
 
 ENTRYPOINT ["/entrypoint.sh"]
-# CMD ["apachectl", "-D", "FOREGROUND"]
