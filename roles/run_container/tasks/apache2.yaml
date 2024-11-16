@@ -31,6 +31,9 @@
 #     - apt-get upgrade -y
 #     - apt-get install -y apache2
 
+- name: Debug
+  debug:
+    msg: "{{ apache2_config_path }}"
 
 - name: Copy apache2 config to container
   command:
