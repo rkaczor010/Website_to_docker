@@ -46,7 +46,7 @@
     name: "{{ tmp_container_name }}"
     argv: 
       - /bin/bash
-    command: 'systemctl enable --now apache2'
+    command: 'systemctl enable --now apache2 && systemctl start apache2'
 
 - name: Commit the modified container to a new image
   command:
@@ -78,4 +78,5 @@
     #   - "/var/www:/var/www" 
     detach: true
     interactive: true
-    tty: true   
+    tty: true
+    #command: systemctl enable --now httpd

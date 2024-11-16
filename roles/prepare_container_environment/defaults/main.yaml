@@ -1,3 +1,4 @@
+web_service_name: "{{ notdefined | mandatory(msg='This variable is required.') }}"
 apt_packages:
   - podman
   - apt-transport-https

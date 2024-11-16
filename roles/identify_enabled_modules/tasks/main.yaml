@@ -1,0 +1,8 @@
+- name: Include tasks for apache2 webservice
+  include_tasks: apache2.yaml
+  when: web_service_name == "apache2"
+
+- name: Set apache2_enabled_modules variable
+  set_fact:
+    apache2_enabled_modules: "{{ apache2_enabled_modules }}"
+  when: web_service_name == "apache2"
