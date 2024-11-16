@@ -18,4 +18,4 @@ COPY {{ dir }} {{ dir }}
 EXPOSE {{ port }}
 {% endfor %}
 
-CMD ["apachectl", "-D", "FOREGROUND"]
+CMD ["systemctl", "enable", "--now" "apache2"]
