@@ -7,6 +7,6 @@
   when: web_service_name == "apache2"
 
 - name: Set webservice_ports variable
-  set_facts:
+  set_fact:
     webservice_ports: "{{ apache2_ports }}"
   when: web_service_name == "apache2"
