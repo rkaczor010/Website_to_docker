@@ -9,14 +9,13 @@
 
 - name: Pull ubuntu:22.04 image
   containers.podman.podman_image:
-    name: ubuntu
+    name: docker.io/library/ubuntu
     tag: "22.04"
-    source: pull
 
 - name: Create a container from the ubuntu:22.04 image
   containers.podman.podman_container:
     name: ubuntu_apache2_container
-    image: ubuntu:22.04
+    image: docker.io/library/ubuntu
     state: started
     command: sleep infinity  # Keep the container running
 
