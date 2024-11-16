@@ -4,6 +4,6 @@ apache2_enabled_modules: "{{ notdefined | mandatory(msg='This variable is requir
 tmp_container_name: tmp_apache2_ubuntu
 apache2_container_name: apache2_ubuntu
 ubuntu_container_image: docker.io/library/ubuntu:22.04
-custom_apache2_container_image: docker.io/library/apache2_ubuntu:22.04
+custom_apache2_container_image: apache2_ubuntu:22.04
 apache2_config_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"
 apache2_content_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"
