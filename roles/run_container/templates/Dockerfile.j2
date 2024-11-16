@@ -18,7 +18,9 @@ COPY {{ dir }} {{ dir }}
 # RUN apt-get install -y {{ module }}
 # {% endfor %}
 
-RUN systemctl enable --now apache2
+RUN service apache2 start
+RUN a2dissite 000-default
+RUN service apache2 reload
 
 {% for port in webservice_ports %}
 EXPOSE {{ port }}
