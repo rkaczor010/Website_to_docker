@@ -34,7 +34,8 @@
 - name: Copy apache2 config files and website content to container
   command:
     cmd: 'podman cp {{ item }} {{ tmp_container_name }}:{{ item }}'
-  loop: "{{ ( apache2_config_path | list) + ( apache2_content_path | list) }}"
+  loop: "{{ (apache2_config_path if apache2_config_path is list else [apache2_config_path]) + (apache2_content_path if apache2_content_path is list else [apache2_content_path]) }}"
+
 
 - name: Commit the modified container to a new image
   command:
