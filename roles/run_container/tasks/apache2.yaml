@@ -32,6 +32,14 @@
     - apt-get install -y apache2
     - apt-get install -y systemctl
 
+# - name: Install apache2 modules inside the container
+#   containers.podman.podman_container_exec:
+#     name: "{{ tmp_container_name }}"
+#     argv: 
+#       - /bin/bash
+#     command: "{{ item }}"
+#   loop: "{{ v}"
+
 - name: Copy apache2 config to container
   command:
     cmd: 'podman cp {{ apache2_config_path }} {{ tmp_container_name }}:{{ apache2_config_path }}'
@@ -46,7 +54,15 @@
     name: "{{ tmp_container_name }}"
     argv: 
       - /bin/bash
-    command: 'systemctl enable --now apache2 && systemctl start apache2'
+    command: 'systemctl enable --now apache2'
+
+- name: Start apache2 service on container
+  containers.podman.podman_container_exec:
+    name: "{{ tmp_container_name }}"
+    argv: 
+      - /bin/bash
+    command: 'systemctl start apache2'
+
 
 - name: Commit the modified container to a new image
   command:

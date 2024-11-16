@@ -14,6 +14,7 @@
     #     apache2_content_dirs: "{{ document_roots }}"
     - name: identify_and_backup_content
     - name: identify_web_ports
+    - name: identify_enabled_modules
     - name: run_container
       vars:
         apache2_config_path: "{{ apache2_root_path }}"
