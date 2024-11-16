@@ -1,7 +1,7 @@
 - name: Create ports mapping list
   set_fact:
-    webservice_ports_mappings: "{{ webservice_ports | map('regex_replace', '(.*)', '\\1:\\1') | list }}"
-
+    webservice_ports_mappings: "{{ webservice_ports | map('regex_replace', '(\\d+)', '\\1:\\1') | list }}"
+    
 - name: debug
   debug:
     msg: "{{ webservice_ports_mappings }}"
