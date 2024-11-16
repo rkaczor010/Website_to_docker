@@ -1,30 +1,41 @@
 - name: Install Podman and dependencies
   apt:
-    name:
-      - podman
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg
-      - lsb-release
-      - uidmap
-      - dbus-user-session
+    name: "{{ apt_packages }}"
     state: present
     update_cache: yes
 
 - name: Create a user for rootless containers
   user:
-    name: containers
+    name: "{{ rootless_user }}"
     state: present
     create_home: yes
     shell: /bin/bash
 
-- name: Run rootless HTTPD container as podmanuser
+- name: Run rootless apache2 container as podmanuser
   containers.podman.podman_container:
-    name: httpd-container
-    image: docker.io/library/httpd
+    name: "{{ container_name }}"
+    image: "{{ container_image }}"
     state: started
     restart_policy: always
-    ports:
-      - "8080:80"
-  #become_user: containers
+    ports: "{{ container_ports_mappings }}"
+  #become_user: containers 
+
+- name: Create directory for apache2 backup in {{ rootless_user }} home directory
+  file:
+    path: /home/{{ rootless_user }}/apache2
+    state: directory
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    mode: 0755
+
+- name: Backup apache2 config and contene directories recursively while preserving file permissions
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    directory_mode: preserve
+    mode: preserve
+    force: yes
+    recurse: yes
+  loop: "{{ apache2_content_dirs }}"

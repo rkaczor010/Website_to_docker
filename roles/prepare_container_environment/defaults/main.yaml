@@ -1,0 +1,15 @@
+apt_packages:
+  - podman
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - uidmap
+  - dbus-user-session
+rootless_user: containers
+container_name: httpd
+container_image: docker.io/library/httpd
+container_ports_mappings:
+  - "8080:80"
+apache2_content_dirs: "{{ notdefined | mandatory(msg='This variable is required.') }}"
