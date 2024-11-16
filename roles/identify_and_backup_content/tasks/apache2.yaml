@@ -41,7 +41,6 @@
   ansible.builtin.copy:
     src: "{{ apache2_root_path }}"
     dest: /home/{{ rootless_user }}/apache2{{ apache2_root_path }}
-    directory_mode: preserve
     mode: preserve
     force: true
 
@@ -49,7 +48,6 @@
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: /home/{{ rootless_user }}/apache2{{ item }}
-    directory_mode: preserve
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
