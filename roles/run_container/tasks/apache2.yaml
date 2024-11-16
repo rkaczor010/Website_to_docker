@@ -9,19 +9,18 @@
 
 - name: Pull ubuntu:22.04 image
   containers.podman.podman_image:
-    name: docker.io/library/ubuntu
-    tag: "22.04"
+    name: "{{ ubuntu_container_image }}"
 
-- name: Create a container from the ubuntu:22.04 image
+- name: Create a container from the "{{ ubuntu_container_image }}" image
   containers.podman.podman_container:
-    name: ubuntu_apache2_container
-    image: docker.io/library/ubuntu
+    name: "{{ tmp_container_name }}"
+    image: "{{ ubuntu_container_image }}"
     state: started
-    command: sleep infinity  # Keep the container running
+    detach: true
 
 - name: Install updates and apache2 package inside the container
   containers.podman.podman_container_exec:
-    name: ubuntu_apache2_container
+    name: "{{ tmp_container_name }}"
     argv: 
       - /bin/bash
     command: "{{ item }}"
@@ -32,32 +31,25 @@
 
 - name: Commit the modified container to a new image
   command:
-    cmd: podman commit ubuntu_apache2_container custom_apache_container:1
-
-  # containers.podman.podman_image:
-  #   name: my_custom_ubuntu_apache
-  #   tag: latest
-  #   source: container
-  #   container: ubuntu_apache2_container
+    cmd: podman commit {{ tmp_container_name }} {{ custom_apache2_container_image }}
 
 - name: Stop the container
   containers.podman.podman_container:
-    name: ubuntu_apache2_container
+    name: "{{ tmp_container_name }}"
     state: stopped
 
 - name: Remove the container
   containers.podman.podman_container:
-    name: my_podman_container
+    name: "{{ tmp_container_name }}"
     state: absent
 
-# - name: Run rootless apache2 container as {{ rootless_user }} user
-#   containers.podman.podman_container:
-#     name: "{{ container_name }}"
-#     image: "{{ container_image }}"
-#     state: started
-#     restart_policy: always
-#     ports: "{{ webservice_ports_mappings }}"
-#     volumes:
-#       - /etc/apache2/apache2.conf:/usr/local/apache2/conf/httpd.conf
-#       - "/etc/apache2:/etc/apache2"
-#       - "/var/www:/var/www" 
+- name: Run rootless apache2 container as {{ rootless_user }} user
+  containers.podman.podman_container:
+    name: "{{ apache2_container_name }}"
+    image: "{{ custom_apache2_container_image }}"
+    state: started
+    restart_policy: always
+    ports: "{{ webservice_ports_mappings }}"
+    volumes:
+      - "/etc/apache2:/etc/apache2/"
+      - "/var/www:/var/www" 
