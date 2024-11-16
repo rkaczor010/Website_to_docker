@@ -25,10 +25,10 @@
     argv: 
       - /bin/bash
     command: "{{ item }}"
-    loop:
-      - apt-get update -y
-      - apt-get upgrade -y
-      - apt-get install -y apache2
+  loop:
+    - apt-get update -y
+    - apt-get upgrade -y
+    - apt-get install -y apache2
 
 - name: Commit the modified container to a new image
   containers.podman.podman_image:
