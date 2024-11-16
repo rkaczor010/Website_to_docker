@@ -10,7 +10,7 @@
 
 - name: Extract Apache2 configuration directory
   set_fact:
-    apache_config_dir: "{{ apache_config_file_path | dirname }}"
+    apache_config_dir: "{{ apache_config_file_path }}"
 
 - name: Display Apache2 configuration directory
   debug:
