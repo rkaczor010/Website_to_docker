@@ -2,6 +2,10 @@
   set_fact:
     webservice_ports_mappings: "{{ webservice_ports | map('regex_replace', '(.*)', '\\1:\\1') | list }}"
 
+- name: debug
+  debug:
+    msg: "{{ webservice_ports_mappings }}"
+
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
     name: "{{ container_name }}"
