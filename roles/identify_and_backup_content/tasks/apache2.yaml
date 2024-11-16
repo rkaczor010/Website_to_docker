@@ -40,7 +40,7 @@
 - name: Backup apache2 config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ apache2_root_path }}"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    dest: /home/{{ rootless_user }}/apache2{{ apache2_root_path }}
     directory_mode: preserve
     mode: preserve
     force: true
