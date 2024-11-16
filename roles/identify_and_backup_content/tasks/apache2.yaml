@@ -37,20 +37,20 @@
     group: "{{ rootless_user }}"
     mode: '0755'
 
-- name: Backup apache2 config recursively while preserving file permissions
-  ansible.builtin.copy:
-    src: "{{ apache2_root_path }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ apache2_root_path }}
-    mode: preserve
-    force: true
+# - name: Backup apache2 config recursively while preserving file permissions
+#   ansible.builtin.copy:
+#     src: "{{ apache2_root_path }}/"
+#     dest: /home/{{ rootless_user }}/apache2{{ apache2_root_path }}
+#     mode: preserve
+#     force: true
 
-- name: Backup apache2 content recursively while preserving file permissions
-  ansible.builtin.copy:
-    src: "{{ item }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
-    mode: preserve
-    force: true
-  loop: "{{ apache2_document_roots }}"
+# - name: Backup apache2 content recursively while preserving file permissions
+#   ansible.builtin.copy:
+#     src: "{{ item }}/"
+#     dest: /home/{{ rootless_user }}/apache2{{ item }}
+#     mode: preserve
+#     force: true
+#   loop: "{{ apache2_document_roots }}"
 
 - name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
   ansible.builtin.file:
