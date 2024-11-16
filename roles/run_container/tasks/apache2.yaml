@@ -59,4 +59,6 @@
     volumes:
       - "/etc/apache2:/etc/apache2/"
       - "/var/www:/var/www" 
-
+    detach: true
+    interactive: true
+    tty: true   
