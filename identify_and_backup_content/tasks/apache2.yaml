@@ -1,0 +1,62 @@
+- name: Get Apache2 configuration file path
+  ansible.builtin.shell: apachectl -V
+  register: apache2_config_file
+  failed_when: apache2_config_file.rc != 0
+  changed_when: false
+
+- name: Extract Apache2 configuration root path
+  set_fact:
+    apache2_root_path: "{{ apache2_config_file.stdout | regex_search('HTTPD_ROOT=\"([^\"]+)\"', '\\1') | first }}"
+
+- name: Extract Apache2 configuration file path
+  set_fact:
+    apache2_config_file_path: "{{ apache2_root_path }}/{{ apache2_config_file.stdout | regex_search('SERVER_CONFIG_FILE=\"([^\"]+)\"', '\\1') | first }}"
+
+- name: Display Apache2 configuration directory
+  debug:
+    msg: "Apache2 configuration directory is: {{ apache2_config_file_path }}"
+
+- name: Search for DocumentRoot directive in Apache2 config files
+  command: grep -r "DocumentRoot" {{ apache2_root_path }}/sites-available/
+  register: apache2_documentroot_otput
+  failed_when: false
+
+- name: Extract and filter unique DocumentRoot paths
+  set_fact:
+    document_roots: "{{ apache2_documentroot_otput.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
+
+- name: Display unique DocumentRoot paths
+  debug:
+    msg: "{{ apache2_document_root }}"
+
+- name: Create directory for apache2 backup in {{ rootless_user }} home directory
+  file:
+    path: /home/{{ rootless_user }}/apache2
+    state: directory
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    mode: '0755'
+
+- name: Backup apache2 config recursively while preserving file permissions
+  ansible.builtin.copy:
+    src: "{{ apache2_root_path }}"
+    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    directory_mode: preserve
+    mode: preserve
+    force: true
+
+- name: Backup apache2 content recursively while preserving file permissions
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    directory_mode: preserve
+    mode: preserve
+    force: true
+  loop: "{{ apache2_document_root }}"
+
+- name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
+  ansible.builtin.file:
+    path: /home/{{ rootless_user }}/apache2
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    recurse: yes

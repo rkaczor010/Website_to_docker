@@ -1,0 +1,2 @@
+web_service_name: "{{ notdefined | mandatory(msg='This variable is required.') }}"
+rootless_user: "{{ notdefined | mandatory(msg='This variable is required.') }}"

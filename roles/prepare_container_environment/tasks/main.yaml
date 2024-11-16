@@ -11,35 +11,12 @@
     create_home: yes
     shell: /bin/bash
 
-- name: Run rootless apache2 container as {{ rootless_user }} user
-  containers.podman.podman_container:
-    name: "{{ container_name }}"
-    image: "{{ container_image }}"
-    state: started
-    restart_policy: always
-    ports: "{{ container_ports_mappings }}"
-  #become_user: containers 
+# - name: Run rootless apache2 container as {{ rootless_user }} user
+#   containers.podman.podman_container:
+#     name: "{{ container_name }}"
+#     image: "{{ container_image }}"
+#     state: started
+#     restart_policy: always
+#     ports: "{{ container_ports_mappings }}"
+#   #become_user: containers 
 
-- name: Create directory for apache2 backup in {{ rootless_user }} home directory
-  file:
-    path: /home/{{ rootless_user }}/apache2
-    state: directory
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
-    mode: '0755'
-
-- name: Backup apache2 config and contene directories recursively while preserving file permissions
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
-    directory_mode: preserve
-    mode: preserve
-    force: true
-  loop: "{{ apache2_content_dirs }}"
-
-- name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
-  ansible.builtin.file:
-    path: /home/{{ rootless_user }}/apache2
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
-    recurse: yes
