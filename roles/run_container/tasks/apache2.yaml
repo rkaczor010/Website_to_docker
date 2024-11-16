@@ -1,7 +1,7 @@
 - name: Create ports mapping list
   set_fact:
     webservice_ports_mappings: "{{ webservice_ports | map('regex_replace', '(\\d+)', '\\1:\\1') | list }}"
-    
+
 - name: debug
   debug:
     msg: "{{ webservice_ports_mappings }}"
@@ -14,5 +14,6 @@
     restart_policy: always
     ports: "{{ webservice_ports_mappings }}"
     volumes:
+      - /etc/apache2/apache2.conf:/usr/local/apache2/conf/httpd.conf
       - "/etc/apache2:/etc/apache2"
       - "/var/www:/var/www" 
