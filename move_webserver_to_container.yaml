@@ -13,3 +13,4 @@
     #   vars:
     #     apache2_content_dirs: "{{ document_roots }}"
     - name: identify_and_backup_content
+    - name: identify_web_ports

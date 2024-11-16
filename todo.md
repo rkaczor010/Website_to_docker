@@ -2,3 +2,4 @@
 2. dla pgsql - database dumb lub pozostawienie db
 3. systemd entity dla zarzadzania kontenerem
 4. podman detach container
+5. webservice ssl

@@ -1,0 +1,12 @@
+- name: Find Apache2 Listen ports from configuration files
+  ansible.builtin.shell: grep -h "^Listen" {{ apache2_root_path }}/ports.conf {{ apache2_root_path }}/sites-enabled/*.conf
+  register: apache2_listen_ports
+  changed_when: false
+
+- name: Extract Apache2 ports
+  set_fact:
+    apache_ports: "{{ apache2_listen_ports.stdout_lines | map('regex_replace', '^Listen ', '') | list }}"
+
+- name: Display Apache2 ports
+  debug:
+    msg: "Apache2 is listening on ports: {{ apache_ports }}"
