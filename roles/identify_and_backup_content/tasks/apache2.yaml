@@ -59,6 +59,10 @@
   debug:
     msg: "{{ apache2_sslcertificatekeyfile_path }}"
 
+- name: Set unique apache2 SSL files path
+  set_fact:
+    apache2_ssl_certs_path: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path | list | unique }}"
+
 # Backup
 
 - name: Create directory for apache2 backup in {{ rootless_user }} home directory
@@ -83,48 +87,15 @@
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
-###
-- name: Ensure source path is valid
-  stat:
-    path: "{{ item }}"
-  register: source_check
-  loop: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path }}"
-  failed_when: source_check.stat.exists == false
-  ignore_errors: yes
 
-- name: Ensure destination directories exist
-  file:
-    path: "{{ item | dirname }}"
-    state: directory
-    mode: '0755'
-  loop: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path }}"
-  when: source_check.results[ansible_loop.index0].stat.exists == true
-
-- name: Copy the file from source to destination
-  copy:
-    src: "{{ item }}"
-    dest: "{{ destination_paths[ansible_loop.index0] }}"
-    mode: '0644'
-  loop: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path }}"
-  when: source_check.results[ansible_loop.index0].stat.exists == true
-
-
-###
-- name: Backup apache2 SSLCertificateKeyFile recursively while preserving file permissions
+- name: Backup apache2 certificates recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}/"
     dest: /home/{{ rootless_user }}/apache2{{ item }}
     mode: preserve
     force: true
-  loop: "{{ apache2_sslcertificatekeyfile_path }}"
-
-- name: Backup apache2 SSLCertificateFile recursively while preserving file permissions
-  ansible.builtin.copy:
-    src: "{{ item }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
-    mode: preserve
-    force: true
-  loop: "{{ apache2_sslcertificatefile_path }}"
+  loop: "{{ apache2_ssl_certs_path }}"
+  ignore_errors: true
 
 - name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
   ansible.builtin.file:
