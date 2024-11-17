@@ -15,19 +15,54 @@
 - name: Display Apache2 configuration directory
   debug:
     msg: "Apache2 configuration directory is: {{ apache2_config_file_path }}"
+###
 
-- name: Search for DocumentRoot directive in Apache2 config files
-  command: grep -r "DocumentRoot" {{ apache2_root_path }}/sites-available/
-  register: apache2_documentroot_otput
-  failed_when: false
+- name: Find all files in {{ apache2_root_path }}/sites-available/ directory
+  find:
+    paths: "{{ apache2_root_path }}"/sites-available
+    recurse: yes
+    file_type: file
+  register: apache2_sitesavailable_files
 
-- name: Extract and filter unique DocumentRoot paths
+- name: Find all files in {{ apache2_root_path }}/sites-enabled directory
+  find:
+    paths: "{{ apache2_root_path }}"/sites-enabled
+    recurse: yes
+    file_type: file
+  register: apache2_sitesenabled_files
+
+- name: Combine files from both directories
   set_fact:
-    apache2_document_roots: "{{ apache2_documentroot_otput.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
+  apache2_sites_files: "{{ apache2_sitesenabled_files.files + de2_files.apache2_sitesavailable_files }}"
 
-- name: Display unique DocumentRoot paths
+- name: Display all found files DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
   debug:
-    msg: "{{ apache2_document_roots }}"
+  var: apache2_sites_files
+
+
+
+
+
+
+
+
+
+
+
+###
+
+# - name: Search for DocumentRoot directive in Apache2 config files
+#   command: grep -r "DocumentRoot" {{ apache2_root_path }}/sites-available/
+#   register: apache2_documentroot_otput
+#   failed_when: false
+
+# - name: Extract and filter unique DocumentRoot paths
+#   set_fact:
+#     apache2_document_roots: "{{ apache2_documentroot_otput.stdout_lines | select('search', 'DocumentRoot') | map('regex_replace', '.*DocumentRoot\\s+(.*)', '\\1') | unique | list }}"
+
+# - name: Display unique DocumentRoot paths
+#   debug:
+#     msg: "{{ apache2_document_roots }}"
 
 
 ###############
@@ -52,6 +87,8 @@
 # - name: Display unique SSLCertificate paths (both SSLCertificateFile and SSLCertificateKeyFile)
 #   debug:
 #     msg: "{{ apache2_sslcertificate_paths }}"
+
+
 
 - name: Search for SSLCertificateFile  directive in Apache2 config files
   command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
