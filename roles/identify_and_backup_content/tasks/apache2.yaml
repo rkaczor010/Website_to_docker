@@ -33,7 +33,7 @@
 
 - name: Combine files from both directories
   set_fact:
-  apache2_sites_files: "{{ apache2_sitesenabled_files.files + apache2_sitesavailable_files.files }}"
+    apache2_sites_files: "{{ apache2_sitesenabled_files.files + apache2_sitesavailable_files.files }}"
 
 - name: Display all found files DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
   debug:
