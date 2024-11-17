@@ -46,7 +46,7 @@
 - name: Read content of each SSL configuration file
   slurp:
     path: "{{ item }}"
-  loop: "{{ ssl_files }}"
+  loop: "{{ apache2_sites_files_paths }}"
   register: file_contents
 
 - name: Search SSL certificate and key paths in each file
