@@ -32,8 +32,7 @@
 
 ###############
 - name: Search for SSLCertificateKeyFile and SSLCertificateFile directives in Apache2 config files (sites-available and sites-enabled)
-  command: 
-    cmd: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
+  command: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
   register: apache2_ssl_certificate_paths_output
   failed_when: false
 
@@ -42,12 +41,12 @@
     apache2_sslcertificate_paths: >
       {{
         apache2_ssl_certificate_paths_output.stdout_lines |
-        select('search', 'SSLCertificateFile|SSLCertificateKeyFile') |
-        select('search', '^\\s*[^#]') |  # Exclude lines starting with #
-        map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') |
-        unique |
+        select('search', 'SSLCertificateFile|SSLCertificateKeyFile') |  # Filter only lines with the directive
+        select('search', '^\\s*[^#]') |  # Exclude lines starting with '#'
+        map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') |  # Extract the file path
+        unique |  # Remove duplicates
         list |
-        default([])
+        default([])  # Ensure the result is a list (empty if no results)
       }}
 
 - name: Display unique SSLCertificate paths (both SSLCertificateFile and SSLCertificateKeyFile)
