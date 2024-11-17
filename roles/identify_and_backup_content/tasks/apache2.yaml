@@ -15,18 +15,18 @@
 - name: Display Apache2 configuration directory
   debug:
     msg: "Apache2 configuration directory is: {{ apache2_config_file_path }}"
-###
+######################
 
 - name: Find all files in {{ apache2_root_path }}/sites-available/ directory
   find:
-    paths: "{{ apache2_root_path }}"/sites-available
+    paths: "{{ apache2_root_path }}/sites-available"
     recurse: yes
     file_type: file
   register: apache2_sitesavailable_files
 
 - name: Find all files in {{ apache2_root_path }}/sites-enabled directory
   find:
-    paths: "{{ apache2_root_path }}"/sites-enabled
+    paths: "{{ apache2_root_path }}/sites-enabled"
     recurse: yes
     file_type: file
   register: apache2_sitesenabled_files
@@ -37,7 +37,7 @@
 
 - name: Display all found files DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
   debug:
-  var: apache2_sites_files
+    msg: "{{ apache2_sites_files }}"
 
 
 
