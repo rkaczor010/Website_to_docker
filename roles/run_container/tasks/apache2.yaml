@@ -46,6 +46,10 @@
     chdir: /home/{{ rootless_user }}/apache2
   become_user: "{{ rootless_user }}"
 
+- name: Allow unprivileged user to bind privileged ports
+  command:
+    cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
+
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
     name: "{{ apache2_container_name }}"
@@ -58,6 +62,7 @@
     tty: true
     #userns: auto
   become_user: "{{ rootless_user }}"
+  become_method: su -
 
 
 - name: Remove not used images
