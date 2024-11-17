@@ -59,13 +59,13 @@
   debug:
     msg: "{{ apache2_sslcertificatekeyfile_path }}"
 
-# - name: Set unique apache2 SSL files path
-#   set_fact:
-#     apache2_ssl_certs_path: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path | list | unique }}"
+- name: Set unique apache2 SSL files path
+  set_fact:
+    apache2_ssl_certs_path_combined: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path | list | unique }}"
 
 - name: Filter list
   set_fact:
-    apache2_ssl_certs_path: "{{ (apache2_sslcertificatekeyfile_path | list + apache2_sslcertificatefile_path | list) | select('regex_findall', '^/[^#\s\t]*$') | list | unique }}"
+    apache2_ssl_certs_path: "{{ apache2_ssl_certs_path_combined | select('regex_findall', '^/[^#\s\t]*$') | list | unique }}"
 
 
 # Backup
