@@ -44,17 +44,25 @@
     var: apache2_sites_files_paths
 
 
-- name: Search SSL certificate and key paths in each file
-  lineinfile:
-    path: "{{ item }}"  # Loop over each file in the list
-    regexp: '^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)'  # Regex to match the relevant lines
-    state: present
-  loop: "{{ apache2_sites_files_paths }}"
-  register: ssl_paths
+- name: Read content of each SSL configuration file
+    slurp:
+      path: "{{ item }}"
+    loop: "{{ apache2_sites_files_paths }}"
+    register: file_contents
 
-- name: Print SSL certificate and key paths found
+- name: Search SSL certificate and key paths in each file
   debug:
-    var: ssl_paths.results
+    msg: "{{ item.item }}: {{ item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') }}"
+  loop: "{{ file_contents.results }}"
+  when: item.content is defined
+
+- name: Check and report SSL certificate and key paths
+  debug:
+    msg: |
+      SSL certificate and key paths found in {{ item.item }}: 
+      {{ item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') }}
+  loop: "{{ file_contents.results }}"
+  when: item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') | length > 0
 
 ###
 
