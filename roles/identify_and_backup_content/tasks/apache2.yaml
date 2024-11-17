@@ -87,6 +87,14 @@
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
+ 
+- name: Create the target directories dynamically
+  ansible.builtin.file:
+    path: "/home/{{ rootless_user }}/apache2/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ apache2_ssl_certs_path }}"
+  ignore_errors: true
 
 - name: Backup apache2 certificates recursively while preserving file permissions
   ansible.builtin.copy:
