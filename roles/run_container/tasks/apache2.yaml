@@ -39,6 +39,9 @@
     mode: '0755'
   become_user: "{{ rootless_user }}"
 
+- name: Enable lingering for rootless user
+  command:
+    cmd: loginctl enable-linger {{ rootless_user }}
 
 - name: Build container image
   command: 
@@ -49,6 +52,7 @@
 - name: Allow unprivileged user to bind privileged ports
   command:
     cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
+
 
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
