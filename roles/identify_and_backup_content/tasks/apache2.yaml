@@ -19,7 +19,7 @@
 
 # DocumentRoot in apache2
 - name: Search for DocumentRoot directive in Apache2 config files
-  command: grep -r "DocumentRoot" {{ apache2_root_path }}/sites-available/
+  command: grep -r "DocumentRoot" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
   register: apache2_documentroot_otput
   failed_when: false
 
@@ -33,7 +33,7 @@
 
 # SSLCertificateFile
 - name: Search for SSLCertificateFile  directive in Apache2 config files
-  command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
+  command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
   register: apache2_sslcrtificatefile_otput
   failed_when: false
 
@@ -47,7 +47,7 @@
 
 # SSLCertificateKeyFile
 - name: Search for SSLCertificateKeyFile directive in Apache2 config files
-  command: grep -r "SSLCertificateKeyFile " {{ apache2_root_path }}/sites-available/
+  command: grep -r "SSLCertificateKeyFile " {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
   register: apache2_sslcertificatekeyfile_otput
   failed_when: false
 
