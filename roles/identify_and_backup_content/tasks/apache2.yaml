@@ -24,7 +24,7 @@
     file_type: file
   register: apache2_sitesavailable_files
 
-- name: Find all files in {{ apache2_root_path }}/sites-enabled directory
+- name: Find all files in {{ apache2_root_path }}/sites-enabled/ directory
   find:
     paths: "{{ apache2_root_path }}/sites-enabled"
     recurse: yes
@@ -35,9 +35,13 @@
   set_fact:
     apache2_sites_files: "{{ apache2_sitesenabled_files.files + apache2_sitesavailable_files.files }}"
 
-- name: Display all found files DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+- name: Extract the paths of all files
+  set_fact:
+    apache2_sites_files_paths: "{{ apache2_sites_files | map(attribute='path') | list }}"
+
+- name: Display all file paths
   debug:
-    msg: "{{ apache2_sites_files.path }}"
+    var: apache2_sites_files_paths
 
 
 
