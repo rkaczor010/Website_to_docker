@@ -29,6 +29,37 @@
   debug:
     msg: "{{ apache2_document_roots }}"
 
+
+
+
+- name: Search for SSLCertificateFile  directive in Apache2 config files
+  command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
+  register: apache2_sslcrtificatefile_otput
+  failed_when: false
+
+- name: Extract and filter unique SSLCertificateFile paths
+  set_fact:
+    apache2_sslcertificatefile_path: "{{ apache2_sslcrtificatefile_otput.stdout_lines | select('search', 'SSLCertificateFile') | map('regex_replace', '.*SSLCertificateFile\\s+(.*)', '\\1') | unique | list | default('') }}"
+
+- name: Display unique SSLCertificateFile paths
+  debug:
+    msg: "{{ apache2_sslcertificatefile_path }}"
+
+
+
+- name: Search for SSLCertificateKeyFile directive in Apache2 config files
+  command: grep -r "SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/
+  register: apache2_sslcertificatekeyfile_otput
+  failed_when: false
+
+- name: Extract and filter unique SSLCertificateKeyFile paths
+  set_fact:
+    apache2_sslcertificatekeyfile_path: "{{ apache2_sslcertificatekeyfile_otput.stdout_lines | select('search', 'SSLCertificateKeyFile') | map('regex_replace', '.*SSLCertificateKeyFile\\s+(.*)', '\\1') | unique | list | default('') }}"
+
+- name: Display unique SSLCertificateKeyFile paths
+  debug:
+    msg: "{{ apache2_sslcertificatekeyfile_path }}"
+
 - name: Create directory for apache2 backup in {{ rootless_user }} home directory
   file:
     path: /home/{{ rootless_user }}/apache2
@@ -51,6 +82,22 @@
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
+
+- name: Backup apache2 SSLCertificateKeyFile recursively while preserving file permissions
+  ansible.builtin.copy:
+    src: "{{ item }}/"
+    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    mode: preserve
+    force: true
+  loop: "{{ apache2_sslcertificatekeyfile_path }}"
+
+- name: Backup apache2 SSLCertificateFile recursively while preserving file permissions
+  ansible.builtin.copy:
+    src: "{{ item }}/"
+    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    mode: preserve
+    force: true
+  loop: "{{ apache2_sslcertificatefile_path }}"
 
 - name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
   ansible.builtin.file:
