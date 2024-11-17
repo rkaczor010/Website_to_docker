@@ -14,16 +14,22 @@ COPY {{ dir }} {{ dir }}
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN apt-get install -y ufw
-RUN ufw reset
-RUN ufw default deny incoming
-RUN ufw default allow outgoing
-
 {% for port in webservice_ports %}
-RUN ufw allow {{ port }}/tcp
+RUN iptables -A INPUT -p tcp --dport {{ port }} -j ACCEPT
 {% endfor %}
+RUN iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+RUN iptables -P INPUT DROP
 
-RUN ufw enable
+# RUN apt-get install -y ufw
+# RUN ufw reset
+# RUN ufw default deny incoming
+# RUN ufw default allow outgoing
+
+# {% for port in webservice_ports %}
+# RUN ufw allow {{ port }}/tcp
+# {% endfor %}
+
+# RUN ufw enable
 
 {% for port in webservice_ports %}
 EXPOSE {{ port }}
