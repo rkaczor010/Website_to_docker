@@ -83,14 +83,40 @@
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
+###
+- name: Ensure source path is valid
+  stat:
+    path: "{{ item }}"
+  register: source_check
+  loop: "{{ apache2_sslcertificatekeyfile_path }}"
+  failed_when: source_check.stat.exists == false
+  ignore_errors: yes
 
+- name: Ensure destination directories exist
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ source_paths }}"
+  when: source_check.results[ansible_loop.index0].stat.exists == true
+
+- name: Copy the file from source to destination
+  copy:
+    src: "{{ item }}"
+    dest: "{{ destination_paths[ansible_loop.index0] }}"
+    mode: '0644'
+  loop: "{{ source_paths }}"
+  when: source_check.results[ansible_loop.index0].stat.exists == true
+
+
+###
 - name: Backup apache2 SSLCertificateKeyFile recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}/"
     dest: /home/{{ rootless_user }}/apache2{{ item }}
     mode: preserve
     force: true
-  loop: "{{ apache2_sslcertificatekeyfile_path }}"
+  loop: "{{ apache2_sslcertificatefile_path + apache2_sslcertificatefile_path }}"
 
 - name: Backup apache2 SSLCertificateFile recursively while preserving file permissions
   ansible.builtin.copy:
@@ -98,7 +124,7 @@
     dest: /home/{{ rootless_user }}/apache2{{ item }}
     mode: preserve
     force: true
-  loop: "{{ apache2_sslcertificatefile_path }}"
+  loop: "{{ apache2_sslcertificatefile_path + apache2_sslcertificatefile_path }}"
 
 - name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
   ansible.builtin.file:
