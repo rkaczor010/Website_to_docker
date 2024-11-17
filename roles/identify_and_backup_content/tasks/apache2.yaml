@@ -65,7 +65,7 @@
 
 - name: Filter list
   set_fact:
-    apache2_ssl_certs_path: "{{ apache2_sslcertificatekeyfile_path + apache2_sslcertificatefile_path  | select('regex_search', '^/[^#\s\t]*$') | list | unique }}"
+    apache2_ssl_certs_path: "{{ (apache2_sslcertificatekeyfile_path | list + apache2_sslcertificatefile_path | list) | select('regex_search', '^/[^#\\s\\t]*$') | list | unique }}"
 
 
 # Backup
