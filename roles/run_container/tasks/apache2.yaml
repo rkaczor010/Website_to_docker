@@ -48,7 +48,9 @@
     cmd: podman build -t {{ custom_apache2_container_image }} .
     chdir: /home/{{ rootless_user }}/apache2
   become_user: "{{ rootless_user }}"
-
+  become_method: su -
+  become_flags: '-'
+  
 - name: Allow unprivileged user to bind privileged ports
   command:
     cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
@@ -67,6 +69,8 @@
     #userns: auto
   become_user: "{{ rootless_user }}"
   become_method: su -
+  become_flags: '-'
+
 
 
 - name: Remove not used images
