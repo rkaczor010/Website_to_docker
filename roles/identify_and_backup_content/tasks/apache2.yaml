@@ -31,40 +31,40 @@
 
 
 ###############
-- name: Search for SSLCertificateKeyFile and SSLCertificateFile directives in Apache2 config files (sites-available and sites-enabled)
-  command: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
-  register: apache2_ssl_certificate_paths_output
-  failed_when: false
-
-- name: Extract and filter unique SSLCertificate paths (SSLCertificateFile and SSLCertificateKeyFile)
-  set_fact:
-    apache2_sslcertificate_paths: >
-      {{
-        apache2_ssl_certificate_paths_output.stdout_lines |
-        select('search', 'SSLCertificateFile|SSLCertificateKeyFile') | 
-        select('search', '^\\s*[^#]') |
-        map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') | 
-        unique | 
-        list |
-        default([])
-      }}
-
-- name: Display unique SSLCertificate paths (both SSLCertificateFile and SSLCertificateKeyFile)
-  debug:
-    msg: "{{ apache2_sslcertificate_paths }}"
-
-# - name: Search for SSLCertificateFile  directive in Apache2 config files
-#   command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
-#   register: apache2_sslcrtificatefile_otput
+# - name: Search for SSLCertificateKeyFile and SSLCertificateFile directives in Apache2 config files (sites-available and sites-enabled)
+#   command: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
+#   register: apache2_ssl_certificate_paths_output
 #   failed_when: false
 
-# - name: Extract and filter unique SSLCertificateFile paths
+# - name: Extract and filter unique SSLCertificate paths (SSLCertificateFile and SSLCertificateKeyFile)
 #   set_fact:
-#     apache2_sslcertificatefile_path: "{{ apache2_sslcrtificatefile_otput.stdout_lines | select('search', 'SSLCertificateFile') | map('regex_replace', '.*SSLCertificateFile\\s+(.*)', '\\1') | unique | list | default('') }}"
+#     apache2_sslcertificate_paths: >
+#       {{
+#         apache2_ssl_certificate_paths_output.stdout_lines |
+#         select('search', 'SSLCertificateFile|SSLCertificateKeyFile') | 
+#         select('search', '^\\s*[^#]') |
+#         map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') | 
+#         unique | 
+#         list |
+#         default([])
+#       }}
 
-# - name: Display unique SSLCertificateFile paths
+# - name: Display unique SSLCertificate paths (both SSLCertificateFile and SSLCertificateKeyFile)
 #   debug:
-#     msg: "{{ apache2_sslcertificatefile_path }}"
+#     msg: "{{ apache2_sslcertificate_paths }}"
+
+- name: Search for SSLCertificateFile  directive in Apache2 config files
+  command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
+  register: apache2_sslcrtificatefile_otput
+  failed_when: false
+
+- name: Extract and filter unique SSLCertificateFile paths
+  set_fact:
+    apache2_sslcertificatefile_path: "{{ apache2_sslcrtificatefile_otput.stdout_lines | select('search', 'SSLCertificateFile') | map('regex_replace', '.*SSLCertificateFile\\s+(.*)', '\\1') | unique | list | default('') }}"
+
+- name: Display unique SSLCertificateFile paths
+  debug:
+    msg: "{{ apache2_sslcertificatefile_path }}"
 
 
 # - name: Search for SSLCertificateKeyFile directive in Apache2 config files
