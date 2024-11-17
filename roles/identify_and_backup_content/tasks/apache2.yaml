@@ -17,31 +17,44 @@
     msg: "Apache2 configuration directory is: {{ apache2_config_file_path }}"
 ######################
 
-# - name: Find all files in {{ apache2_root_path }}/sites-available/ directory
-#   find:
-#     paths: "{{ apache2_root_path }}/sites-available"
-#     recurse: yes
-#     file_type: file
-#   register: apache2_sitesavailable_files
+- name: Find all files in {{ apache2_root_path }}/sites-available/ directory
+  find:
+    paths: "{{ apache2_root_path }}/sites-available"
+    recurse: yes
+    file_type: file
+  register: apache2_sitesavailable_files
 
-# - name: Find all files in {{ apache2_root_path }}/sites-enabled/ directory
-#   find:
-#     paths: "{{ apache2_root_path }}/sites-enabled"
-#     recurse: yes
-#     file_type: file
-#   register: apache2_sitesenabled_files
+- name: Find all files in {{ apache2_root_path }}/sites-enabled/ directory
+  find:
+    paths: "{{ apache2_root_path }}/sites-enabled"
+    recurse: yes
+    file_type: file
+  register: apache2_sitesenabled_files
 
-# - name: Combine files from both directories
-#   set_fact:
-#     apache2_sites_files: "{{ apache2_sitesenabled_files.files + apache2_sitesavailable_files.files }}"
+- name: Combine files from both directories
+  set_fact:
+    apache2_sites_files: "{{ apache2_sitesenabled_files.files + apache2_sitesavailable_files.files }}"
 
-# - name: Extract the paths of all files
-#   set_fact:
-#     apache2_sites_files_paths: "{{ apache2_sites_files | map(attribute='path') | list }}"
+- name: Extract the paths of all files
+  set_fact:
+    apache2_sites_files_paths: "{{ apache2_sites_files | map(attribute='path') | list }}"
 
-# - name: Display all file paths
-#   debug:
-#     var: apache2_sites_files_paths
+- name: Display all file paths
+  debug:
+    var: apache2_sites_files_paths
+
+
+- name: Search SSL certificate and key paths in each file
+  lineinfile:
+    path: "{{ item }}"  # Loop over each file in the list
+    regexp: '^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)'  # Regex to match the relevant lines
+    state: present
+  loop: "{{ apache2_sites_files_paths }}"
+  register: ssl_paths
+
+- name: Print SSL certificate and key paths found
+  debug:
+    var: ssl_paths.results
 
 ###
 
