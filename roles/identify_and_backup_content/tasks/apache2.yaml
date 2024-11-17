@@ -51,17 +51,14 @@
 
 - name: Search SSL certificate and key paths in each file
   debug:
-    msg: "{{ item.item }}: {{ item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') }}"
+    msg: "{{ item.item }}: {{ item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+([^\s#]+)') }}"
   loop: "{{ file_contents.results }}"
   when: item.content is defined
 
-- name: Check and report SSL certificate and key paths
+- name: Display unique SSLCertificateFile paths
   debug:
-    msg: |
-      SSL certificate and key paths found in {{ item.item }}: 
-      {{ item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') }}
-  loop: "{{ file_contents.results }}"
-  when: item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') | length > 0
+    msg: "{{ item | unique }}"
+  loop: "{{ file_contents.results | map(attribute='content') | map('b64decode') | map('regex_findall', '^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+([^\s#]+)') | flatten }}"
 ###
 
 - name: Search for DocumentRoot directive in Apache2 config files
