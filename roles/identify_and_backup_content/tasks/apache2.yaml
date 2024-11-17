@@ -33,7 +33,7 @@
 
 # SSLCertificateFile
 - name: Search for SSLCertificateFile  directive in Apache2 config files
-  command: grep -r "SSLCertificateFile " {{ apache2_root_path }}/sites-available/
+  command: grep -r "SSLCertificateFile" {{ apache2_root_path }}/sites-available/
   register: apache2_sslcrtificatefile_otput
   failed_when: false
 
@@ -43,7 +43,7 @@
 
 - name: Display unique SSLCertificateFile paths
   debug:
-    msg: "{{ apache2_sslcrtificatefile_otput }}"
+    msg: "{{ apache2_sslcertificatefile_path }}"
 
 # SSLCertificateKeyFile
 - name: Search for SSLCertificateKeyFile directive in Apache2 config files
