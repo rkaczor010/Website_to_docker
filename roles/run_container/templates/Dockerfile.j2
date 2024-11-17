@@ -1,7 +1,5 @@
 FROM {{ ubuntu_container_image }}
 
-
-
 RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y apache2
@@ -15,6 +13,16 @@ COPY {{ dir }} {{ dir }}
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+RUN ufw reset
+RUN ufw default deny incoming
+RUN ufw default allow outgoing
+
+{% for port in webservice_ports %}
+RUN sudo ufw allow {{ port }}/tcp
+{% endfor %}
+
+RUN ufw enable
 
 {% for port in webservice_ports %}
 EXPOSE {{ port }}
