@@ -50,7 +50,7 @@
     detach: true
     interactive: true
     tty: true
-    userns: auto
+    #userns: auto
 
 - name: Remove not used images
   command:
