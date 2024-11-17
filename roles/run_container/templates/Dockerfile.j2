@@ -11,6 +11,11 @@ COPY {{ apache2_config_path }} {{ apache2_config_path }}
 COPY {{ dir }} {{ dir }}
 {% endfor %}
 
+{% for file in apache2_ssl_certs_path %}
+COPY {{ file }} {{ file }}
+{% endfor %}
+
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

@@ -9,15 +9,14 @@
 
   roles:
     - name: identify_web_service
-    # - name: prepare_container_environment
-    #   vars:
-    #     apache2_content_dirs: "{{ document_roots }}"
+    - name: prepare_container_environment
+      vars:
+        apache2_content_dirs: "{{ document_roots }}"
     - name: identify_and_backup_content
-    # - name: identify_web_ports
-    # - name: identify_enabled_modules
-    # - name: run_container
-    #   vars:
-    #     apache2_config_path: "{{ apache2_root_path }}"
-    #     apache2_content_path: "{{ apache2_document_roots }}"
-    #     apache2_sslcertificatekeyfile_path: "{{ apache2_sslcertificatefile_path }}"
-    #     apache2_sslcertificatefile_path: "{{ apache2_sslcertificatefile_path }}"
+    - name: identify_web_ports
+    - name: identify_enabled_modules
+    - name: run_container
+      vars:
+        apache2_config_path: "{{ apache2_root_path }}"
+        apache2_content_path: "{{ apache2_document_roots }}"
+        apache2_ssl_certs_path: "{{ apache2_ssl_certs_path }}"
