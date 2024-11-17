@@ -37,7 +37,7 @@
 
 - name: Display all found files DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
   debug:
-    msg: "{{ apache2_sites_files }}"
+    msg: "{{ apache2_sites_files.path }}"
 
 
 
