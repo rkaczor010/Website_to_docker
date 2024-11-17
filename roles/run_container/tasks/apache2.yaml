@@ -10,6 +10,7 @@
 - name: Pull {{ ubuntu_container_image }} image
   containers.podman.podman_image:
     name: "{{ ubuntu_container_image }}"
+  become_user: "{{ rootless_user }}"
 
 - name: Create directory for Dockerfile
   file:
@@ -23,22 +24,27 @@
   template:
     src: templates/Dockerfile.j2
     dest: /home/{{ rootless_user }}/apache2/Dockerfile
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    mode: '0755'
+  become_user: "{{ rootless_user }}"
+
 
 - name: Create entrypoint.sh from template
   template:
     src: templates/entrypoint.sh
     dest: /home/{{ rootless_user }}/apache2/entrypoint.sh
+    owner: "{{ rootless_user }}"
+    group: "{{ rootless_user }}"
+    mode: '0755'
+  become_user: "{{ rootless_user }}"
 
 
 - name: Build container image
   command: 
     cmd: podman build -t {{ custom_apache2_container_image }} .
     chdir: /home/{{ rootless_user }}/apache2
-
-- name: Remove Dockerfile
-  file:
-    path: /home/{{ rootless_user }}/podman/Dockerfile
-    state: absent
+  become_user: "{{ rootless_user }}"
 
 - name: Run rootless apache2 container as {{ rootless_user }} user
   containers.podman.podman_container:
@@ -51,10 +57,14 @@
     interactive: true
     tty: true
     #userns: auto
+  become_user: "{{ rootless_user }}"
+
 
 - name: Remove not used images
   command:
     cmd: podman image prune --force
+  become_user: "{{ rootless_user }}"
+
 
 
 
