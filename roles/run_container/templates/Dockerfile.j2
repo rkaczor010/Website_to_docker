@@ -20,7 +20,7 @@ RUN ufw default deny incoming
 RUN ufw default allow outgoing
 
 {% for port in webservice_ports %}
-RUN sudo ufw allow {{ port }}/tcp
+RUN ufw allow {{ port }}/tcp
 {% endfor %}
 
 RUN ufw enable
