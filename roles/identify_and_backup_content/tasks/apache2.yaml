@@ -29,7 +29,7 @@
   debug:
     msg: "{{ apache2_document_roots }}"
 
-    
+
 ###############
 - name: Search for SSLCertificateKeyFile and SSLCertificateFile directives in Apache2 config files (sites-available and sites-enabled)
   command: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
@@ -42,6 +42,7 @@
       {{
         apache2_ssl_certificate_paths_output.stdout_lines |
         select('search', 'SSLCertificateFile|SSLCertificateKeyFile') |
+        select('search', '^\\s*[^#]') |  # Exclude lines starting with #
         map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') |
         unique |
         list |
