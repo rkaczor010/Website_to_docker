@@ -52,8 +52,8 @@
   failed_when: false
 
 - name: Extract and filter unique SSLCertificateKeyFile paths
-  set_fact:
-    apache2_sslcertificatekeyfile_path:"{{ apache2_sslcrtificatefile_otput.stdout_lines | select('search', '^(?!\\s*#).*SSLCertificateKeyFile') | map('regex_replace', '.*SSLCertificateKeyFile\\s+(.*)', '\\1') | unique | list | default('') }}"
+  set_fact: 
+    apache2_sslcertificatekeyfile_path: "{{ apache2_sslcrtificatefile_otput.stdout_lines | select('search', '^(?!\\s*#).*SSLCertificateKeyFile') | map('regex_replace', '.*SSLCertificateKeyFile\\s+(.*)', '\\1') | unique | list | default('') }}"
 
 - name: Display unique SSLCertificateKeyFile paths
   debug:
