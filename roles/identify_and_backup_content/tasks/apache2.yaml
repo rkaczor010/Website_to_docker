@@ -41,12 +41,12 @@
     apache2_sslcertificate_paths: >
       {{
         apache2_ssl_certificate_paths_output.stdout_lines |
-        select('search', 'SSLCertificateFile|SSLCertificateKeyFile') |  # Filter only lines with the directive
-        select('search', '^\\s*[^#]') |  # Exclude lines starting with '#'
-        map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') |  # Extract the file path
-        unique |  # Remove duplicates
+        select('search', 'SSLCertificateFile|SSLCertificateKeyFile') | 
+        select('search', '^\\s*[^#]') |
+        map('regex_replace', '^.*SSLCertificate(File|KeyFile)\\s+([^\s]+).*$', '\\2') | 
+        unique | 
         list |
-        default([])  # Ensure the result is a list (empty if no results)
+        default([])
       }}
 
 - name: Display unique SSLCertificate paths (both SSLCertificateFile and SSLCertificateKeyFile)
