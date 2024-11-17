@@ -43,16 +43,15 @@
   debug:
     var: apache2_sites_files_paths
 
-
 - name: Read content of each SSL configuration file
   slurp:
     path: "{{ item }}"
-  loop: "{{ apache2_sites_files_paths }}"
+  loop: "{{ ssl_files }}"
   register: file_contents
 
 - name: Search SSL certificate and key paths in each file
   debug:
-    msg: "{{ item.item }}: {{ item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') }}"
+    msg: "{{ item.item }}: {{ item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') }}"
   loop: "{{ file_contents.results }}"
   when: item.content is defined
 
@@ -60,10 +59,9 @@
   debug:
     msg: |
       SSL certificate and key paths found in {{ item.item }}: 
-      {{ item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') }}
+      {{ item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') }}
   loop: "{{ file_contents.results }}"
-  when: item.content | b64decode | regex_findall('^\s*(SSLCertificateFile|SSLCertificateKeyFile)\s+(.+)') | length > 0
-
+  when: item.content | b64decode | regex_findall('^\\s*(SSLCertificateFile|SSLCertificateKeyFile)\\s+(.+)') | length > 0
 ###
 
 - name: Search for DocumentRoot directive in Apache2 config files
