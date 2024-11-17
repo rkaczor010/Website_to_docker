@@ -32,7 +32,8 @@
 
 ###############
 - name: Search for SSLCertificateKeyFile and SSLCertificateFile directives in Apache2 config files (sites-available and sites-enabled)
-  command: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
+  command: 
+    cmd: grep -r -E "SSLCertificateFile|SSLCertificateKeyFile" {{ apache2_root_path }}/sites-available/ {{ apache2_root_path }}/sites-enabled/
   register: apache2_ssl_certificate_paths_output
   failed_when: false
 
