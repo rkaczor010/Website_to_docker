@@ -10,7 +10,7 @@
 - name: Pull {{ ubuntu_container_image }} image
   containers.podman.podman_image:
     name: "{{ ubuntu_container_image }}"
-  become_user: "{{ rootless_user }}"
+  # become_user: "{{ rootless_user }}"
 
 - name: Create directory for Dockerfile
   file:
@@ -27,7 +27,7 @@
     owner: "{{ rootless_user }}"
     group: "{{ rootless_user }}"
     mode: '0755'
-  become_user: "{{ rootless_user }}"
+  # become_user: "{{ rootless_user }}"
 
 
 - name: Create entrypoint.sh from template
@@ -37,7 +37,7 @@
     owner: "{{ rootless_user }}"
     group: "{{ rootless_user }}"
     mode: '0755'
-  become_user: "{{ rootless_user }}"
+  # become_user: "{{ rootless_user }}"
 
 - name: Enable lingering for rootless user
   command:
@@ -48,12 +48,12 @@
     cmd: podman build -t {{ custom_apache2_container_image }} .
     chdir: /home/{{ rootless_user }}/apache2
   become_user: "{{ rootless_user }}"
-  become_method: su
-  become_flags: '-'
+  # become_method: su
+  # become_flags: '-'
 
-- name: Allow unprivileged user to bind privileged ports
-  command:
-    cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
+# - name: Allow unprivileged user to bind privileged ports
+#   command:
+#     cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
 
 
 - name: Run rootless apache2 container as {{ rootless_user }} user
@@ -66,10 +66,10 @@
     detach: true
     interactive: true
     tty: true
-    #userns: auto
-  become_user: "{{ rootless_user }}"
-  become_method: su
-  become_flags: '-'
+    userns: auto
+  # become_user: "{{ rootless_user }}"
+  # become_method: su
+  # become_flags: '-'
 
 
 
