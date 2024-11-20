@@ -24,7 +24,8 @@
 #     web_service_name: "apache2"
 #   when: apache2_running.state == "started" and apache2_running is defined
 
-
+- name: Gather facts about services
+  service_facts:
 
 - name: Check if apache2 is installed and running
   set_fact:
