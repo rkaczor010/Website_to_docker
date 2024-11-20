@@ -73,6 +73,35 @@
     state: directory
     mode: '0755'
 
+
+# Step 1: Find all files and directories in the source path
+- name: Find files and directories in the source path
+  ansible.builtin.find:
+    paths: ""/var/www/html""
+    recurse: yes
+  register: found_files
+
+# Step 2: Create the directory structure in /tmp
+- name: Create the directory structure under /tmp
+  ansible.builtin.file:
+    path: "/tmp{{ item.path | regex_replace('^/var/www/html', '') }}"
+    state: directory
+    mode: '0755'
+  with_items: "{{ found_files.files }}"
+  when: item.isdir
+
+# Step 3: Copy files to /tmp with the same structure
+- name: Copy files to /tmp with the same structure
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "/tmp{{ item.path | regex_replace('^/var/www/html', '') }}"
+    remote_src: yes
+  with_items: "{{ found_files.files }}"
+  when: not item.isdir
+
+
+
+
 - name: Backup nginx config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ nginx_root_path }}/"
