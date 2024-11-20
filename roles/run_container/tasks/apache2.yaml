@@ -32,14 +32,12 @@
   command: 
     cmd: podman build -t {{ custom_apache2_container_image }} .
     chdir: "{{ ansible_env.HOME }}/apache2"
-  become_user: "{{ ansible_env.HOME }}"
 
 - name: Stop apache2 service on host os
   systemd:
     name: apache2
     state: stopped
     enabled: false
-
 
 - name: Run apache2 container in userns
   containers.podman.podman_container:
