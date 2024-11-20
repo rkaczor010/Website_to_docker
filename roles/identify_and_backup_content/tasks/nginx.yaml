@@ -108,7 +108,7 @@
 
 - name: Display the result
   debug:
-    msg: "{{ file_stat.stdout }}"
+    msg: "{{ file_stat }}"
   # when: file_stat.stat.exists
 
 - name: Backup nginx certificates recursively while preserving file permissions
