@@ -84,7 +84,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ item }}
     mode: preserve
     force: true
-  ignore_errors: true
+    ignore_errors: true
   loop: "{{ nginx_document_roots }}"
  
 - name: Create the target directories dynamically
@@ -103,6 +103,7 @@
     force: true
   loop: "{{ nginx_ssl_certs_path }}"
   ignore_errors: true
+  become: true
 
 - name: Change owner of /home/{{ rootless_user }}/nginx recursivelly
   ansible.builtin.file:
