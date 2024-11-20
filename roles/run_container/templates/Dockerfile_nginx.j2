@@ -6,17 +6,6 @@ RUN apt-get install -y nginx
 
 COPY /backup/ /
 
-# COPY {{ nginx_config_path }} {{ nginx_config_path }}
-
-# {% for dir in nginx_content_path %}
-# COPY {{ dir }} {{ dir }}
-# {% endfor %}
-
-# {% for file in nginx_ssl_certs_path %}
-# COPY {{ file }} {{ file }}
-# {% endfor %}
-
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
