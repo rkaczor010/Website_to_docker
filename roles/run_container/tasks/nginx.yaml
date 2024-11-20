@@ -32,7 +32,6 @@
   command: 
     cmd: podman build -t {{ custom_nginx_container_image }} .
     chdir: "{{ ansible_env.HOME }}/nginx"
-  become_user: "{{ ansible_env.HOME }}"
 
 - name: Stop nginx service on host os
   systemd:
