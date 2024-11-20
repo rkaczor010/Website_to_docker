@@ -4,17 +4,21 @@
   gather_facts: true
   become: true
 
-  vars:
-    rootless_user: containers
+  pre_tasks:
+    - name: debug
+      debug:
+        msg: "{{ ansible_env.HOME }}"
+
+  # vars:
+  #   rootless_uwser: containers
 
   roles:
     - name: identify_web_service
-    - name: prepare_container_environment
     - name: identify_and_backup_content
     - name: identify_web_ports
     # - name: identify_enabled_modules
-    # - name: run_container
-    #   vars:
-    #     apache2_config_path: "{{ apache2_root_path }}"
-    #     apache2_content_path: "{{ apache2_document_roots }}"
-    #     apache2_ssl_certs_path: "{{ apache2_ssl_certs_path }}"
+    - name: run_container
+      vars:
+        apache2_config_path: "{{ apache2_root_path }}"
+        apache2_content_path: "{{ apache2_document_roots }}"
+        apache2_ssl_certs_path: "{{ apache2_ssl_certs_path }}"

@@ -12,7 +12,7 @@
 
 - name: Create directory for Dockerfile
   file:
-    path: /home/{{ rootless_user }}/apache2
+    path: /home/{{ rootless_user }}/nginx
     state: directory
     owner: "{{ rootless_user }}"
     group: "{{ rootless_user }}"
@@ -21,7 +21,7 @@
 - name: Create Dockerfile from template
   template:
     src: templates/Dockerfile.j2
-    dest: /home/{{ rootless_user }}/apache2/Dockerfile
+    dest: /home/{{ rootless_user }}/nginx/Dockerfile
     owner: "{{ rootless_user }}"
     group: "{{ rootless_user }}"
     mode: '0755'
@@ -29,28 +29,32 @@
 - name: Create entrypoint.sh from template
   template:
     src: templates/entrypoint.sh
-    dest: /home/{{ rootless_user }}/apache2/entrypoint.sh
+    dest: /home/{{ rootless_user }}/nginx/entrypoint.sh
     owner: "{{ rootless_user }}"
     group: "{{ rootless_user }}"
     mode: '0755'
 
+- name: Enable lingering for rootless user
+  command:
+    cmd: loginctl enable-linger {{ rootless_user }}
+
 - name: Build container image
   command: 
-    cmd: podman build -t {{ custom_apache2_container_image }} .
-    chdir: /home/{{ rootless_user }}/apache2
+    cmd: podman build -t {{ custom_nginx_container_image }} .
+    chdir: /home/{{ rootless_user }}/nginx
   become_user: "{{ rootless_user }}"
 
-- name: Stop apache2 service on host os
+- name: Stop nginx service on host os
   systemd:
-    name: apache2
+    name: nginx
     state: stopped
     enabled: false
 
 
-- name: Run apache2 container in userns
+- name: Run nginx container in userns
   containers.podman.podman_container:
-    name: "{{ apache2_container_name }}"
-    image: "{{ custom_apache2_container_image }}"
+    name: "{{ nginx_container_name }}"
+    image: "{{ custom_nginx_container_image }}"
     state: started
     restart_policy: always
     ports: "{{ webservice_ports_mappings }}"

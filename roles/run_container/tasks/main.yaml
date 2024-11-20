@@ -1,7 +1,23 @@
-# - name: Include Ubuntu specific defaults
-#   include_vars: defaults/apache2.yaml
-#   when: web_service_name == "apache2"
+- name: Install Podman and dependencies
+  apt:
+    name: "{{ apt_packages }}"
+    state: present
+    update_cache: yes
+
+# Apache2
+- name: Include Ubuntu specific defaults
+  include_vars: defaults/apache2.yaml
+  when: web_service_name == "apache2"
 
 - name: Include tasks for apache2 webservice
   include_tasks: apache2.yaml
   when: web_service_name == "apache2"
+
+# Nginx
+- name: Include Nginx specific defaults
+  include_vars: defaults/nginx.yaml
+  when: web_service_name == "nginx"
+
+- name: Include tasks for Nginx webservice
+  include_tasks: nginx.yaml
+  when: web_service_name == "nginx"
