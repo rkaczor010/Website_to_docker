@@ -1,4 +1,5 @@
-- name: Include Ubuntu specific defaults
+# Apache2
+- name: Include Apache specific defaults
   include_vars: defaults/apache2.yaml
   when: web_service_name == "apache2"
 
@@ -10,3 +11,17 @@
   set_fact:
     webservice_ports: "{{ apache2_ports }}"
   when: web_service_name == "apache2"
+
+# Nginx
+- name: Include Nginx specific defaults
+  include_vars: defaults/nginx.yaml
+  when: web_service_name == "nginx"
+
+- name: Include tasks for nginx webservice
+  include_tasks: nginx.yaml
+  when: web_service_name == "nginx"
+
+- name: Set webservice_ports variable
+  set_fact:
+    webservice_ports: "{{ nginx_ports }}"
+  when: web_service_name == "nginx"

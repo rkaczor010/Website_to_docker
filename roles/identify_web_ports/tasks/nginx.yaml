@@ -1,0 +1,12 @@
+- name: Find nginx Listen ports from configuration files
+  ansible.builtin.shell: grep -h "listen" {{ nginx_root_path }}/sites-available {{ nginx_root_path }}/sites-enabled/ {{ nginx_root_path }}/*.conf {{ nginx_root_path }}/conf.d 
+  register: nginx_listen_ports
+  changed_when: false
+
+- name: Extract nginx ports (clean up extra spaces/tabs)
+  set_fact:
+    nginx_ports: "{{ nginx_listen_ports.stdout_lines | map('regex_replace', '^\\s*Listen\\s*', '') | map('trim') | unique | list }}"
+
+- name: Display nginx ports
+  debug:
+    msg: "nginx is listening on ports: {{ nginx_ports }}"

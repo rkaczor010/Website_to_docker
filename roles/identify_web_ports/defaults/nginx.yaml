@@ -1,0 +1,1 @@
+nginx_root_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"

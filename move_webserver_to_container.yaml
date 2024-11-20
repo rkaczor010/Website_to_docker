@@ -9,9 +9,7 @@
 
   roles:
     - name: identify_web_service
-    # - name: prepare_container_environment
-    #   vars:
-    #     apache2_content_dirs: "{{ document_roots }}"
+    - name: prepare_container_environment
     - name: identify_and_backup_content
     # - name: identify_web_ports
     # - name: identify_enabled_modules
