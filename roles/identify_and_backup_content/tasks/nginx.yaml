@@ -30,6 +30,16 @@
   debug:
     msg: "{{ nginx_document_roots }}"
 
+# SSL Certificate
+
+- name: Search for ssl_certificate  directive in nginx config files
+  command: grep -r "ssl_certificate" {{ nginx_root_path }}/sites-available/ {{ nginx_root_path }}/sites-enabled/ {{ nginx_config_file_path }}
+  register: nginx_ssl_certificate_otput
+  failed_when: false
+
+- name: Extract and filter unique ssl_certificate paths
+  set_fact:
+    nginx_ssl_certificate_path: "{{ nginx_ssl_certificate_otput.stdout_lines | select('search', 'ssl_certificate') | map('regex_replace', '.*ssl_certificate\\s+(.*)', '\\1') | unique | list }}"
 
 
 
