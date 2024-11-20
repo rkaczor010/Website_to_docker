@@ -73,6 +73,10 @@
     state: directory
     mode: '0755'
 
+- name: Ensure source file exists, even if its not used
+  command:
+    cmd: touch {{ nginx_root_path }}
+
 - name: Backup nginx config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ nginx_root_path }}/"
@@ -81,6 +85,11 @@
     force: true
     remote_src: true
   ignore_errors: true
+
+- name: Ensure source file exists, even if its not used
+  command:
+    cmd: touch {{ item }}
+  loop: "{{ nginx_document_roots }}"
 
 - name: Backup nginx content recursively while preserving file permissions
   ansible.builtin.copy:
@@ -100,16 +109,10 @@
   loop: "{{ nginx_ssl_certs_path }}"
   ignore_errors: true
 
-- name: Check if the file exists
-  ansible.builtin.stat:
-    path: "{{ item }}"
-  register: file_stat
+- name: Ensure source file exists, even if its not used
+  command:
+    cmd: touch {{ item }}
   loop: "{{ nginx_ssl_certs_path }}"
-
-- name: Display the result
-  debug:
-    msg: "{{ file_stat }}"
-  # when: file_stat.stat.exists
 
 - name: Backup nginx certificates recursively while preserving file permissions
   ansible.builtin.copy:
