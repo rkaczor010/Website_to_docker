@@ -69,7 +69,7 @@
 
 - name: Create directory for nginx backup in {{ ansible_env.HOME }} home directory
   file:
-    path: "{{ ansible_env.HOME }}/nginx"
+    path: "{{ ansible_env.HOME }}/nginx/backup"
     state: directory
     mode: '0755'
 
@@ -80,51 +80,16 @@
 - name: Backup nginx config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ nginx_root_path }}/"
-    dest: "{{ ansible_env.HOME }}/nginx{{ nginx_root_path }}/"
+    dest: "{{ ansible_env.HOME }}/nginx/backup{{ nginx_root_path }}/"
     mode: preserve
     force: true
     remote_src: true
   ignore_errors: true
 
-
-
-
-- name: Check the status of each path (file or directory)
-  ansible.builtin.stat:
-    path: "{{ item }}"
-  register: path_stat
-  loop: "{{ nginx_document_roots }}"
-
-- name: Initialize existing_nginx_document_roots_files and existing_nginx_document_roots_dirs
-  set_fact:
-    existing_nginx_document_roots_files: []
-    existing_nginx_document_roots_dirs: []
-
-- name: Add to existing_nginx_document_roots_files or existing_nginx_document_roots_dirs based on the type
-  set_fact:
-    existing_nginx_document_roots_files: "{{ existing_nginx_document_roots_files + [item.item] if path_stat.results[loop.index0].stat.exists and path_stat.results[loop.index0].stat.isreg else existing_nginx_document_roots_files }}"
-    existing_nginx_document_roots_dirs: "{{ existing_nginx_document_roots_dirs + [item.item] if path_stat.results[loop.index0].stat.exists and path_stat.results[loop.index0].stat.isdir else existing_nginx_document_roots_dirs }}"
-  loop: "{{ paths_to_check }}"
-  when: path_stat.results[loop.index0].stat.exists
-
-- name: Display the existing files
-  debug:
-    msg: "Existing files: {{ existing_nginx_document_roots_files }}"
-
-- name: Display the existing directories
-  debug:
-    msg: "Existing directories: {{ existing_nginx_document_roots_dirs }}"
-
-
-
-
-
-
-
 - name: Backup nginx content recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}/"
-    dest: "{{ ansible_env.HOME }}/nginx{{ item }}/"
+    dest: "{{ ansible_env.HOME }}/nginx/backup{{ item }}/"
     mode: preserve
     force: true
     remote_src: true
@@ -133,7 +98,7 @@
  
 - name: Create the target directories dynamically
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/nginx/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
+    path: "{{ ansible_env.HOME }}/nginx/backup/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
     state: directory
     mode: '0755'
   loop: "{{ nginx_ssl_certs_path }}"
@@ -147,7 +112,7 @@
 - name: Backup nginx certificates recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/nginx{{ item }}"
+    dest: "{{ ansible_env.HOME }}/nginx/backup{{ item }}"
     mode: preserve
     force: true
     remote_src: true
