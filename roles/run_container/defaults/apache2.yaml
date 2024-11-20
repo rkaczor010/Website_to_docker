@@ -1,6 +1,6 @@
 apache2_container_name: apache2_ubuntu
 custom_apache2_container_image: docker.io/library/apache2_ubuntu:22.04
-apache2_config_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"
-apache2_content_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"
-apache2_ssl_certs_path: "{{ apache2_sslcertificatefile_path }}"
 
+apache2_config_path: "{{ apache2_root_path }}"
+apache2_content_path: "{{ apache2_document_roots }}"
+apache2_ssl_certs_path: "{{ apache2_ssl_certs_path }}"
