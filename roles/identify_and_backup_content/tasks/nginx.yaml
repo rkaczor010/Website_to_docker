@@ -84,8 +84,8 @@
 
 - name: Backup nginx content recursively while preserving file permissions
   ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/nginx{{ item }}"
+    src: "{{ item }}/"
+    dest: "{{ ansible_env.HOME }}/nginx{{ item }}/"
     mode: preserve
     force: true
     remote_src: true
