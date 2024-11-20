@@ -8,39 +8,65 @@
 #     web_service_name: "apache2"
 #   when: apache_check.rc == 0
 
-- name: Check if Apache2 is installed
-  ansible.builtin.package_facts:
-  register: apache2_installed
+# - name: Check if Apache2 is installed
+#   ansible.builtin.package_facts:
+#   register: apache2_installed
 
-- name: Check if Apache2 is running
-  ansible.builtin.systemd:
-    name: apache2
-    state: started
-  when: apache2_installed.packages['apache2'] is defined
-  register: apache2_running
+# - name: Check if Apache2 is running
+#   ansible.builtin.systemd:
+#     name: apache2
+#     state: started
+#   when: apache2_installed.packages['apache2'] is defined
+#   register: apache2_running
+
+# - name: Set web service name to Apache
+#   set_fact:
+#     web_service_name: "apache2"
+#   when: apache2_running.state == "started" and apache2_running is defined
+
+
+
+- name: Check if apache2 is installed and running
+  set_fact:
+    apache2_started: "{{ 'true' if ansible_facts.services['apache2'].state == 'running' else 'false' }}"
+  when: "'apache2' in ansible_facts.services"
 
 - name: Set web service name to Apache
   set_fact:
     web_service_name: "apache2"
-  when: apache2_running.state == "started" and apache2_running is defined
+  when: apache2_started is defined and apache2_started
 
+- name: Check if nginx is installed and running
+  set_fact:
+    nginx_started: "{{ 'true' if ansible_facts.services['nginx'].state == 'running' else 'false' }}"
+  when: "'nginx' in ansible_facts.services"
 
-- name: Check if Nginx is installed
-  ansible.builtin.package_facts:
-  register: nginx_installed
-
-- name: Check if Nginx is running
-  ansible.builtin.systemd:
-    name: nginx
-    state: started
-  when: nginx_installed.packages['nginx'] is defined
-  register: nginx_running
-
-
-- name: Set web service name to Nginx
+- name: Set web service name to Apache
   set_fact:
     web_service_name: "nginx"
-  when: nginx_running.state == "started" and nginx_running is defined
+  when: nginx_started is defined and nginx_started
+
+
+
+
+
+  ###################
+# - name: Check if Nginx is installed
+#   ansible.builtin.package_facts:
+#   register: nginx_installed
+
+# - name: Check if Nginx is running
+#   ansible.builtin.systemd:
+#     name: nginx
+#     state: started
+#   when: nginx_installed.packages['nginx'] is defined
+#   register: nginx_running
+
+
+# - name: Set web service name to Nginx
+#   set_fact:
+#     web_service_name: "nginx"
+#   when: nginx_running.state == "started" and nginx_running is defined
 
 
 
