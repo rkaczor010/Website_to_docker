@@ -108,13 +108,12 @@
 
 - name: Filter out files that exist
   set_fact:
-    nginx_ssl_certs_path: "{{ nginx_ssl_certs_path | default([]) + [item.item] if file_stat.results[loop.index0].stat.exists else [] }}"
+    existing_files: "{{ existing_files | default([]) + [item.item] if file_stat.results[loop.index0].stat.exists else [] }}"
   loop: "{{ nginx_ssl_certs_path }}"
 
 - name: Display the list of existing files
   debug:
-    msg: "Existing files: {{ nginx_ssl_certs_path }}"
-
+    msg: "Existing files: {{ existing_files }}"
 
 - name: Backup nginx certificates recursively while preserving file permissions
   ansible.builtin.copy:
