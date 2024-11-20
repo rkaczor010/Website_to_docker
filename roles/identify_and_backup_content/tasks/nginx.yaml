@@ -53,7 +53,12 @@
 
 - name: Filter list
   set_fact:
-      nginx_ssl_certs_path: '{{ nginx_ssl_certs_path_combined | select("match", "^/[^# \t]*$") | list | unique }}'
+    nginx_ssl_certs_path: '{{ nginx_ssl_certs_path_combined | select("match", "^/[^# \t]*$") | list | unique }}'
+
+- name: Remove ';' from paths
+  set_fact:
+    nginx_ssl_certs_path: "{{ nginx_ssl_certs_path | map('regex_replace', ';$', '') | list }}"
+
 
 - name: Display unique SSLCertificateFile paths
   debug:
