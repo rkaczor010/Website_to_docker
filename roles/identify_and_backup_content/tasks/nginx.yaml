@@ -18,6 +18,10 @@
   set_fact:
     nginx_document_roots: "{{ nginx_documentroot_otput.stdout_lines | select('search', 'root') | map('regex_replace', '.*root\\s+(.*)', '\\1') | unique | list }}"
 
+- name: Filter liste 
+  set_fact:
+      nginx_document_roots: '{{ nginx_document_roots | select("match", "^/[^# \t]*$") | list | uniqu}}'
+
 - name: Display unique DocumentRoot paths
   debug:
     msg: "{{ nginx_document_roots }}"
