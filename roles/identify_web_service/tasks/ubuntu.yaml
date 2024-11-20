@@ -47,6 +47,10 @@
     web_service_name: "nginx"
   when: nginx_started is defined and nginx_started
 
+- name: Fail playbook if no web service detected
+  debug:
+    msg: "Web service {{ web_service_name }} is running"
+  when: web_service_name not defined
 
 
 
