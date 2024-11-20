@@ -11,3 +11,5 @@ pgsql
 redis
 
 systemd to always run service
+
+mod_security do apache2 + odpowiednik nginx
