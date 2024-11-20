@@ -13,7 +13,7 @@
 
 - name: Get unique ports numbers
   set_fact:
-    nginx_ports: "{{ nginx_ports | map('regex_replace', '\\d+', '') | list | unique }}"
+    nginx_ports:  "{{ nginx_ports | map('regex_findall', '\\d+') | list | unique }}"
 
 - name: Display nginx ports
   debug:
