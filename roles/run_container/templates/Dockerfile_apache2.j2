@@ -4,16 +4,17 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y apache2
 
+COPY /backup/ /
 
-COPY /backup/{{ apache2_config_path }} {{ apache2_config_path }}
+# COPY /backup/{{ apache2_config_path }} {{ apache2_config_path }}
 
-{% for dir in apache2_content_path %}
-COPY /backup{{ dir }} {{ dir }}
-{% endfor %}
+# {% for dir in apache2_content_path %}
+# COPY /backup{{ dir }} {{ dir }}
+# {% endfor %}
 
-{% for file in apache2_ssl_certs_path %}
-COPY /backup{{ file }} {{ file }}
-{% endfor %}
+# {% for file in apache2_ssl_certs_path %}
+# COPY /backup{{ file }} {{ file }}
+# {% endfor %}
 
 
 COPY entrypoint.sh /entrypoint.sh
