@@ -7,6 +7,10 @@
   set_fact:
     nginx_ports: "{{ nginx_listen_ports.stdout_lines | map('regex_replace', '^\\s*listen\\s*', '') | map('trim') | unique | list }}"
 
+- name: Remove comments lines
+  set_fact:
+    nginx_ports: "{{ nginx_ports | selectattr('0', 'search', '^#', invert=True) | list }}"
+
 - name: Display nginx ports
   debug:
     msg: "nginx is listening on ports: {{ nginx_ports }}"
