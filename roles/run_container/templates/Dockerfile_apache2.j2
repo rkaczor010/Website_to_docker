@@ -5,14 +5,14 @@ RUN apt-get upgrade -y
 RUN apt-get install -y apache2
 
 
-COPY {{ apache2_config_path }} {{ apache2_config_path }}
+COPY /backup/{{ apache2_config_path }} {{ apache2_config_path }}
 
 {% for dir in apache2_content_path %}
-COPY {{ dir }} {{ dir }}
+COPY /backup{{ dir }} {{ dir }}
 {% endfor %}
 
 {% for file in apache2_ssl_certs_path %}
-COPY {{ file }} {{ file }}
+COPY /backup{{ file }} {{ file }}
 {% endfor %}
 
 
