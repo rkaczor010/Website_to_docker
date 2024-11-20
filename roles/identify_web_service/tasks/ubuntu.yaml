@@ -68,6 +68,7 @@
 # - name: Display the detected web service binary name
 #   debug:
 #     msg: "Detected web service binary name: {{ web_service_name }}"
+
 - name: Print web service name
   debug:
     msg: "Web service {{ web_service_name }} is running"
