@@ -76,7 +76,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ nginx_root_path }}
     mode: preserve
     force: true
-    ignore_errors: true
+  ignore_errors: true
 
 - name: Backup nginx content recursively while preserving file permissions
   ansible.builtin.copy:
@@ -84,7 +84,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ item }}
     mode: preserve
     force: true
-    ignore_errors: true
+  ignore_errors: true
   loop: "{{ nginx_document_roots }}"
  
 - name: Create the target directories dynamically
