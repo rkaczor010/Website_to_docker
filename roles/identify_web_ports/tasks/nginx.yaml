@@ -17,4 +17,4 @@
 
 - name: Display nginx ports
   debug:
-    msg: "nginx is listening on ports: {{ nginx_ports }}"
+    msg: "{{ nginx_ports }}"
