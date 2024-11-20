@@ -55,8 +55,14 @@
 #   command:
 #     cmd: echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf && sysctl --system
 
+- name: Stop apache2 service on host os
+  systemd:
+    name: apache2
+    state: stopped
+    enabled: false
 
-- name: Run rootless apache2 container as {{ rootless_user }} user
+
+- name: Run apache2 container in userns
   containers.podman.podman_container:
     name: "{{ apache2_container_name }}"
     image: "{{ custom_apache2_container_image }}"

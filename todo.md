@@ -10,3 +10,9 @@
 
 spr czy dziala 443 na rootles, moze nie do spr, 
 dokonczyc nodejs
+
+influx db
+pgsql
+redis
+
+systemd to always run service
