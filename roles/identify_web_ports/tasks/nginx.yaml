@@ -9,11 +9,11 @@
 
 - name: Remove comments lines
   set_fact:
-    nginx_ports: "{{ nginx_ports | rejectattr('0', 'search', '^#') | list }}"
+    nginx_ports: "{{ nginx_ports | rejectattr('0', 'search', '^#') | map('regex_findall', '\\d+') | list | unique }}"
 
-- name: Get unique ports numbers
-  set_fact:
-    nginx_ports:  "{{ nginx_ports | map('regex_findall', '\\d+') | list | unique }}"
+# - name: Get unique ports numbers
+#   set_fact:
+#     nginx_ports:  "{{ nginx_ports | map('regex_findall', '\\d+') | list | unique }}"
 
 - name: Display nginx ports
   debug:
