@@ -1,2 +1,13 @@
 webservice_ports: "{{ notdefined | mandatory(msg='This variable is required.') }}"
 ubuntu_container_image: docker.io/library/ubuntu:22.04
+web_service_name: "{{ notdefined | mandatory(msg='This variable is required.') }}"
+apt_packages:
+  - podman
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - uidmap
+  - dbus-user-session
+rootless_user: "{{ notdefined | mandatory(msg='This variable is required.') }}"
