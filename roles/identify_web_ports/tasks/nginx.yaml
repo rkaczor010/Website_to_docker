@@ -5,7 +5,7 @@
 
 - name: Extract nginx ports (clean up extra spaces/tabs)
   set_fact:
-    nginx_ports: "{{ nginx_listen_ports.stdout_lines | map('regex_replace', '^\\s*Listen\\s*', '') | map('trim') | unique | list }}"
+    nginx_ports: "{{ nginx_listen_ports.stdout_lines | map('regex_replace', '^\\s*listen\\s*', '') | map('trim') | unique | list }}"
 
 - name: Display nginx ports
   debug:
