@@ -10,7 +10,8 @@
 
 - name: Extract nginx configuration root path
   set_fact:
-    nginx_root_path_: "{{ ( nginx_config_file.stderr | regex_search('--conf-path=(.*)', '\\1') | first ).split(' ')[0] }}"
+    nginx_root_path_tmp: "{{ nginx_config_file.stderr | regex_search('--conf-path=(.*)', '\\1') | first }}"
+    nginx_root_path: "{{ nginx_root_path_tmp.split(' ')[0] }}"
     #nginx_config_file_path: "{{ nginx_root_path | regex_replace('/[^/]+$', '') }}"
 
 # - name: Extract nginx configuration file path
