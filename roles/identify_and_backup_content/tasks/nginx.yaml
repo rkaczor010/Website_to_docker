@@ -39,8 +39,30 @@
 
 - name: Extract and filter unique ssl_certificate paths
   set_fact:
-    nginx_ssl_certificate_path: "{{ nginx_ssl_certificate_otput.stdout_lines | select('search', 'ssl_certificate') | map('regex_replace', '.*ssl_certificate\\s+(.*)', '\\1') | unique | list }}"
+    nginx_sslcertificate_path: "{{ nginx_ssl_certificate_otput.stdout_lines | select('search', 'ssl_certificate') | map('regex_replace', '.*ssl_certificate\\s+(.*)', '\\1') | unique | list }}"
 
+# SSL Certificate key file
+
+- name: Search for ssl_certificate_key  directive in nginx config files
+  command: grep -r "ssl_certificate_key" {{ nginx_root_path }}/sites-available/ {{ nginx_root_path }}/sites-enabled/ {{ nginx_config_file_path }}
+  register: nginx_sslcertificatekey_otput
+  failed_when: false
+
+- name: Extract and filter unique ssl_certificate_key paths
+  set_fact:
+    nginx_sslcertificatekey_path: "{{ nginx_sslcertificatekey_otput.stdout_lines | select('search', 'ssl_certificate_key') | map('regex_replace', '.*ssl_certificate_key\\s+(.*)', '\\1') | unique | list }}"
+
+- name: Set unique nginx SSL files path
+  set_fact:
+    nginx_ssl_certs_path_combined: "{{ nginx_sslcertificatekey_path + nginx_sslcertificate_path | list | unique }}"
+
+- name: Filter list
+  set_fact:
+      nginx_ssl_certs_path: '{{ nginx_ssl_certs_path_combined | select("match", "^/[^# \t]*$") | list | unique }}'
+
+- name: Display unique SSLCertificateFile paths
+  debug:
+    msg: "{{ nginx_ssl_certs_path }}"
 
 
 
