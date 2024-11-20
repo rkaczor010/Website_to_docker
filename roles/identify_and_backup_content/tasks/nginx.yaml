@@ -76,6 +76,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ nginx_root_path }}
     mode: preserve
     force: true
+    remote_src: true
   ignore_errors: true
 
 - name: Backup nginx content recursively while preserving file permissions
@@ -84,6 +85,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ item }}
     mode: preserve
     force: true
+    remote_src: true
   ignore_errors: true
   loop: "{{ nginx_document_roots }}"
  
@@ -101,6 +103,7 @@
     dest: /home/{{ rootless_user }}/nginx{{ item }}
     mode: preserve
     force: true
+    remote_src: true
   loop: "{{ nginx_ssl_certs_path }}"
   ignore_errors: true
   become: true
