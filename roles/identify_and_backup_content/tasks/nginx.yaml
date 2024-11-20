@@ -18,9 +18,13 @@
   set_fact:
     nginx_document_roots: "{{ nginx_documentroot_otput.stdout_lines | select('search', 'root') | map('regex_replace', '.*root\\s+(.*)', '\\1') | unique | list }}"
 
-- name: Filter liste 
+- name: Filter list
   set_fact:
     nginx_document_roots: '{{ nginx_document_roots | select("match", "^/[^# \t]*$") | list | unique }}'
+
+- name: Remove ';' from paths
+  set_fact:
+    nginx_document_roots: "{{ nginx_document_roots | map('regex_replace', ';$', '') | list }}"
 
 - name: Display unique DocumentRoot paths
   debug:
