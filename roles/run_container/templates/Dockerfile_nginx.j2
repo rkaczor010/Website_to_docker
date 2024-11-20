@@ -1,0 +1,26 @@
+FROM {{ ubuntu_container_image }}
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y nginx
+
+
+COPY {{ nginx_config_path }} {{ nginx_config_path }}
+
+{% for dir in nginx_content_path %}
+COPY {{ dir }} {{ dir }}
+{% endfor %}
+
+{% for file in nginx_ssl_certs_path %}
+COPY {{ file }} {{ file }}
+{% endfor %}
+
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+{% for port in webservice_ports %}
+EXPOSE {{ port }}
+{% endfor %}
+
+ENTRYPOINT ["/entrypoint.sh"]

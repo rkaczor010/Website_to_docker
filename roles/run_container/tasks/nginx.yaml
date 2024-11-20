@@ -12,37 +12,31 @@
 
 - name: Create directory for Dockerfile
   file:
-    path: /home/{{ rootless_user }}/nginx
+    path: /home/{{ ansible_env.HOME }}/nginx
     state: directory
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
     mode: '0755'
 
 - name: Create Dockerfile from template
   template:
-    src: templates/Dockerfile.j2
-    dest: /home/{{ rootless_user }}/nginx/Dockerfile
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
+    src: templates/Dockerfile_nginx.j2
+    dest: /home/{{ ansible_env.HOME }}/nginx/Dockerfile
     mode: '0755'
 
 - name: Create entrypoint.sh from template
   template:
-    src: templates/entrypoint.sh
-    dest: /home/{{ rootless_user }}/nginx/entrypoint.sh
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
+    src: templates/entrypoint_nginx.sh
+    dest: /home/{{ ansible_env.HOME }}/nginx/entrypoint.sh
     mode: '0755'
 
 - name: Enable lingering for rootless user
   command:
-    cmd: loginctl enable-linger {{ rootless_user }}
+    cmd: loginctl enable-linger {{ ansible_env.HOME }}
 
 - name: Build container image
   command: 
     cmd: podman build -t {{ custom_nginx_container_image }} .
-    chdir: /home/{{ rootless_user }}/nginx
-  become_user: "{{ rootless_user }}"
+    chdir: /home/{{ ansible_env.HOME }}/nginx
+  become_user: "{{ ansible_env.HOME }}"
 
 - name: Stop nginx service on host os
   systemd:
@@ -66,6 +60,6 @@
 - name: Remove not used images
   command:
     cmd: podman image prune --force
-  become_user: "{{ rootless_user }}"
+  become_user: "{{ ansible_env.HOME }}"
 
 

@@ -65,32 +65,30 @@
 
 # Backup
 
-- name: Create directory for apache2 backup in {{ rootless_user }} home directory
+- name: Create directory for apache2 backup in {{ ansible_env.HOME }} home directory
   file:
-    path: /home/{{ rootless_user }}/apache2
+    path: /home/{{ ansible_env.HOME }}/apache2
     state: directory
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
     mode: '0755'
 
 - name: Backup apache2 config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ apache2_root_path }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ apache2_root_path }}
+    dest: /home/{{ ansible_env.HOME }}/apache2{{ apache2_root_path }}
     mode: preserve
     force: true
 
 - name: Backup apache2 content recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    dest: /home/{{ ansible_env.HOME }}/apache2{{ item }}
     mode: preserve
     force: true
   loop: "{{ apache2_document_roots }}"
  
 - name: Create the target directories dynamically
   ansible.builtin.file:
-    path: "/home/{{ rootless_user }}/apache2/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
+    path: "/home/{{ ansible_env.HOME }}/apache2/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
     state: directory
     mode: '0755'
   loop: "{{ apache2_ssl_certs_path }}"
@@ -99,15 +97,8 @@
 - name: Backup apache2 certificates recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}/"
-    dest: /home/{{ rootless_user }}/apache2{{ item }}
+    dest: /home/{{ ansible_env.HOME }}/apache2{{ item }}
     mode: preserve
     force: true
   loop: "{{ apache2_ssl_certs_path }}"
   ignore_errors: true
-
-- name: Change owner of /home/{{ rootless_user }}/apache2 recursivelly
-  ansible.builtin.file:
-    path: /home/{{ rootless_user }}/apache2
-    owner: "{{ rootless_user }}"
-    group: "{{ rootless_user }}"
-    recurse: yes
