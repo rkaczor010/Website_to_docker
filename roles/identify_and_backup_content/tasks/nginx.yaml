@@ -15,3 +15,4 @@
 - name: Display nginx configuration directory
   debug:
     msg: "nginx configuration directory is: {{ nginx_root_path }}"
+x`
