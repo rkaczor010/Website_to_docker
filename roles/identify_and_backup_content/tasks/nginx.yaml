@@ -69,14 +69,14 @@
 
 - name: Create directory for nginx backup in {{ ansible_env.HOME }} home directory
   file:
-    path: /home/{{ ansible_env.HOME }}/nginx
+    path: "{{ ansible_env.HOME }}/nginx"
     state: directory
     mode: '0755'
 
 - name: Backup nginx config recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ nginx_root_path }}/"
-    dest: /home/{{ ansible_env.HOME }}/nginx{{ nginx_root_path }}
+    dest: "{{ ansible_env.HOME }}/nginx{{ nginx_root_path }}"
     mode: preserve
     force: true
     remote_src: true
@@ -85,7 +85,7 @@
 - name: Backup nginx content recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: /home/{{ ansible_env.HOME }}/nginx{{ item }}
+    dest: "{{ ansible_env.HOME }}/nginx{{ item }}"
     mode: preserve
     force: true
     remote_src: true
@@ -94,7 +94,7 @@
  
 - name: Create the target directories dynamically
   ansible.builtin.file:
-    path: "/home/{{ ansible_env.HOME }}/nginx/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
+    path: "{{ ansible_env.HOME }}/nginx/{{ item | regex_replace('^/+', '') | regex_replace('/[^/]+$', '') }}"
     state: directory
     mode: '0755'
   loop: "{{ nginx_ssl_certs_path }}"
@@ -103,7 +103,7 @@
 - name: Backup nginx certificates recursively while preserving file permissions
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: /home/{{ ansible_env.HOME }}/nginx{{ item }}
+    dest: "{{ ansible_env.HOME }}/nginx{{ item }}"
     mode: preserve
     force: true
     remote_src: true

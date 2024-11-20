@@ -12,26 +12,26 @@
 
 - name: Create directory for Dockerfile
   file:
-    path: /home/{{ ansible_env.HOME }}/apache2
+    path: "{{ ansible_env.HOME }}/apache2"
     state: directory
     mode: '0755'
 
 - name: Create Dockerfile from template
   template:
     src: templates/Dockerfile_apache2.j2
-    dest: /home/{{ ansible_env.HOME }}/apache2/Dockerfile
+    dest: "{{ ansible_env.HOME }}/apache2/Dockerfile"
     mode: '0755'
 
 - name: Create entrypoint.sh from template
   template:
     src: templates/entrypoint_apache2.sh
-    dest: /home/{{ ansible_env.HOME }}/apache2/entrypoint.sh
+    dest: "{{ ansible_env.HOME }}/apache2/entrypoint.sh"
     mode: '0755'
 
 - name: Build container image
   command: 
     cmd: podman build -t {{ custom_apache2_container_image }} .
-    chdir: /home/{{ ansible_env.HOME }}/apache2
+    chdir: "{{ ansible_env.HOME }}/apache2"
   become_user: "{{ ansible_env.HOME }}"
 
 - name: Stop apache2 service on host os
@@ -56,6 +56,5 @@
 - name: Remove not used images
   command:
     cmd: podman image prune --force
-  become_user: "{{ ansible_env.HOME }}"
 
 

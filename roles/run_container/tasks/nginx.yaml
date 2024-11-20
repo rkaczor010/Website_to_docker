@@ -12,30 +12,26 @@
 
 - name: Create directory for Dockerfile
   file:
-    path: /home/{{ ansible_env.HOME }}/nginx
+    path: "{{ ansible_env.HOME }}/nginx"
     state: directory
     mode: '0755'
 
 - name: Create Dockerfile from template
   template:
     src: templates/Dockerfile_nginx.j2
-    dest: /home/{{ ansible_env.HOME }}/nginx/Dockerfile
+    dest: "{{ ansible_env.HOME }}/nginx/Dockerfile"
     mode: '0755'
 
 - name: Create entrypoint.sh from template
   template:
     src: templates/entrypoint_nginx.sh
-    dest: /home/{{ ansible_env.HOME }}/nginx/entrypoint.sh
+    dest: "{{ ansible_env.HOME }}/nginx/entrypoint.sh"
     mode: '0755'
-
-- name: Enable lingering for rootless user
-  command:
-    cmd: loginctl enable-linger {{ ansible_env.HOME }}
 
 - name: Build container image
   command: 
     cmd: podman build -t {{ custom_nginx_container_image }} .
-    chdir: /home/{{ ansible_env.HOME }}/nginx
+    chdir: "{{ ansible_env.HOME }}/nginx"
   become_user: "{{ ansible_env.HOME }}"
 
 - name: Stop nginx service on host os
@@ -60,6 +56,6 @@
 - name: Remove not used images
   command:
     cmd: podman image prune --force
-  become_user: "{{ ansible_env.HOME }}"
+
 
 
