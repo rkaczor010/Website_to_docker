@@ -1,4 +1,3 @@
-nginx_enabled_modules: "{{ notdefined | mandatory(msg='This variable is required.') }}"
 nginx_container_name: nginx_ubuntu
 custom_nginx_container_image: docker.io/library/nginx_ubuntu:22.04
 nginx_config_path: "{{ notdefined | mandatory(msg='This variable is required.') }}"
