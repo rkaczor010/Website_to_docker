@@ -4,7 +4,7 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y nginx
 
-COPY /backup/* /
+COPY /backup/ /
 
 # COPY {{ nginx_config_path }} {{ nginx_config_path }}
 
