@@ -20,7 +20,7 @@
 
 - name: Filter liste 
   set_fact:
-      nginx_document_roots: '{{ nginx_document_roots | select("match", "^/[^# \t]*$") | list | uniqu}}'
+    nginx_document_roots: '{{ nginx_document_roots | select("match", "^/[^# \t]*$") | list | uniqu}}'
 
 - name: Display unique DocumentRoot paths
   debug:
