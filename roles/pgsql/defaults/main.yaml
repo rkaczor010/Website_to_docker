@@ -1,0 +1,5 @@
+pgsql_host_user: postgres
+pgsql_host_port: 5432
+pgsql_version: 14
+pgsq_backup_path: /tmp/pgsql_backup
+pgsql_host_data_path: /var/lib/postgresql

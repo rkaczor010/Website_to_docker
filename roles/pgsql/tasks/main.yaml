@@ -1,0 +1,5 @@
+- name: Create a backup of the PostgreSQL database
+  command: pg_dumpall -U postgres -h localhost > "{{ pgsq_backup_path }}"
+  register: pg_backup_result
+  failed_when: pg_backup_result.rc != 0
+  become_user: postgres
