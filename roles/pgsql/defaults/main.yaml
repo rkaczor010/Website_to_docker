@@ -1,5 +1,11 @@
 pgsql_host_user: postgres
 pgsql_host_port: 5432
 pgsql_version: 14
-pgsq_backup_path: /tmp/pgsql_backup
+pgsql_user_workdir: /tmp/psql
+pgsql_backup_filename: database_dump.sql
+pgsql_backup_path: "{{ pgsql_user_workdir }}/{{ pgsql_backup_filename }}"
 pgsql_host_data_path: /var/lib/postgresql
+pgsql_docker_image: docker.io/library/postgres:{{ pgsql_version }}
+pgsql_custom_image: docker.io/library/postgres_custom:{{ pgsql_version }}
+pgsql_container_name: postgresql
+pgsql_restore_script_filename: restore_postgres.sh

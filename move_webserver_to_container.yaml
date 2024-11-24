@@ -5,7 +5,8 @@
   become: true
 
   roles:
-    - name: identify_web_service
-    - name: identify_and_backup_content
-    - name: identify_web_ports
-    - name: run_container
+    # - name: identify_web_service
+    # - name: identify_and_backup_content
+    # - name: identify_web_ports
+    # - name: run_container
+    - name: pgsql
