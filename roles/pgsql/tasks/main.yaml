@@ -2,8 +2,6 @@
   file:
     path: "{{ pgsql_user_workdir }}/"
     mode: 0700
-    owner: "{{ pgsql_host_user }}"
-    group: "{{ pgsql_host_user }}"
     state: directory
   become: true
 
@@ -12,13 +10,17 @@
     cmd: su - postgres -c 'pg_dumpall > {{ pgsql_backup_path }}'
   register: pg_backup_result 
   failed_when: pg_backup_result.rc != 0
-  become: true
 
 - name: Create Dockerfile from template
   template:
     src: templates/Dockerfile_postgres.j2
     dest: "{{ pgsql_user_workdir }}/Dockerfile"
     mode: '0700'
+
+- name: Create a podman volume
+  command:
+    cmd: podman volume create  --opt o=uid={{ pgsql_uid_mapping_start }},gid={{ pgsql_uid_mapping_start }} {{ pgsql_podman_volume_name }}
+  ignore_errors: true
 
 - name: Build container image
   command: 
@@ -40,7 +42,8 @@
     ports: "{{ pgsql_host_port }}:{{ pgsql_host_port }}"
     detach: true
     interactive: true
-    tty: true
-    userns: auto
-
-
+    tty: true 
+    userns: private
+    uidmap: 0:{{ pgsql_uid_mapping_start }}:65536
+    volumes:
+      - "{{ pgsql_podman_volume_name }}:/var/lib/postgresql"

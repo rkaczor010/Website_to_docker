@@ -1,12 +1,5 @@
-FROM {{ pgsq_docker_image }}
+FROM {{ pgsql_docker_image }}
 
-# Set environment variables (optional, you can change this)
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=yourpassword
-ENV POSTGRES_DB=yourdbname
+ENV POSTGRES_PASSWORD=D^79Ad0!w+@w/TPFcZ0S
 
-
-COPY {{ pgsql_backup_filename }} /docker-entrypoint-initdb.d/
-
-# The database dump will be automatically restored during the container's first initialization
-# The /docker-entrypoint-initdb.d/ directory is special and any script or dump files placed here are run during container startup
+COPY {{ pgsql_backup_filename }} /docker-entrypoint-initdb.d/{{ pgsql_backup_filename }}
